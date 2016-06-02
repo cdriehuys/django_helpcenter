@@ -1,2 +1,4 @@
 bumpversion
 flake8
+nose
+tox
