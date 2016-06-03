@@ -1,8 +1,2 @@
 [run]
 branch = True
-omit =
-    # Exclude django source files
-    */django/*
-
-    # Exclude xml library
-    */xml/*

@@ -78,3 +78,8 @@ STATIC_URL = '/static/'
 # Change test runner to the one from django-nose
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=helpcenter',
+]
