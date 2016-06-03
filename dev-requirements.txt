@@ -1,4 +1,6 @@
 bumpversion
+coverage
+django-nose
 flake8
 nose
 tox

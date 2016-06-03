@@ -58,6 +58,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
 
+    # Third party apps
+    'django_nose',
+
     # Custom apps
     'helpcenter',
 )
@@ -70,3 +73,8 @@ AUTHENTICATION_BACKENDS = (
 
 STATIC_ROOT = '/tmp/'
 STATIC_URL = '/static/'
+
+
+# Change test runner to the one from django-nose
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
