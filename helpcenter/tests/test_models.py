@@ -14,16 +14,19 @@ class TestArticleModel(TestCase):
         If arguments are passed to an article, it should be created with
         those parameters already set.
         """
+        category = create_category()
         title = 'Test Article'
         body = 'This is a test article only for <em>testing</em>.'
         time = timezone.now()
 
         article = models.Article.objects.create(
+            category=category,
             title=title,
             body=body,
             time_published=time)
 
         self.assertEqual(1, models.Article.objects.count())
+        self.assertEqual(category, article.category)
         self.assertEqual(title, article.title)
         self.assertEqual(body, article.body)
         self.assertEqual(time, article.time_published)
@@ -43,6 +46,7 @@ class TestArticleModel(TestCase):
             body=body)
         end = timezone.now()
 
+        self.assertIsNone(article.category)
         self.assertTrue(start <= article.time_published <= end)
 
     def test_string_conversion(self):

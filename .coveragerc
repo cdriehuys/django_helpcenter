@@ -1,3 +1,9 @@
 [run]
 branch = True
+omit =
+    # migrations
+    */migrations/*
+
+    # testing utilities
+    */testing_utils.py
 source = helpcenter
