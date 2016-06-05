@@ -1,0 +1,15 @@
+{% extends 'helpcenter/base.html' %}
+
+{% block page_title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+
+  <h1>{{ article.title }}</h1>
+
+  <div class='article-content'>
+    {{ article.body|safe }}
+  </div>
+
+  <a href='{% url "article-list" %}'>Back to Article List</a>
+
+{% endblock %}
