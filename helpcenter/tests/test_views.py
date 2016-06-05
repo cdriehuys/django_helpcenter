@@ -1,8 +1,34 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
+from helpcenter import utils
 from helpcenter.testing_utils import (
     create_article, instance_to_queryset_string)
+
+
+class TestArticleDetailView(TestCase):
+    """ Test cases for Article detail view """
+
+    def test_invalid_pk(self):
+        """ Test getting an article's detail view with an invalid pk.
+
+        If the pk used for the detail view doesn't exist, the page
+        should 404.
+        """
+        url = utils.article_detail(pk=1)
+        response = self.client.get(url)
+
+        self.assertEqual(404, response.status_code)
+
+    def test_valid_pk(self):
+        """ Test getting an article's detail view. """
+        article = create_article()
+
+        url = utils.article_detail(article)
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(article, response.context['article'])
 
 
 class TestArticleListView(TestCase):
