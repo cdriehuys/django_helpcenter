@@ -5,6 +5,8 @@ from helpcenter import models
 ARTICLE_BODY = 'Test article body.'
 ARTICLE_TITLE = 'Test Article'
 
+CATEGORY_TITLE = 'Test Category'
+
 
 def create_article(title=ARTICLE_TITLE, body=ARTICLE_BODY,
                    time_published=None):
@@ -18,6 +20,18 @@ def create_article(title=ARTICLE_TITLE, body=ARTICLE_BODY,
         data['time_published'] = time_published
 
     return models.Article.objects.create(**data)
+
+
+def create_category(title=CATEGORY_TITLE, parent=None):
+    """ Create a category for testing with default values """
+    data = {
+        'title': title,
+    }
+
+    if parent is not None:
+        data['parent'] = parent
+
+    return models.Category.objects.create(**data)
 
 
 def instance_to_queryset_string(instance):

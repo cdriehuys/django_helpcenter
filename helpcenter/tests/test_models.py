@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from helpcenter import models
+from helpcenter.testing_utils import create_category
 
 
 class TestArticleModel(TestCase):
@@ -53,3 +54,45 @@ class TestArticleModel(TestCase):
         article = models.Article(title='Test Article', body='body')
 
         self.assertEqual(article.title, str(article))
+
+
+class TestCategoryModel(TestCase):
+    """ Test cases for the Category model """
+
+    def test_create(self):
+        """ Test creating a Category with all its fields.
+
+        Any arguments passed to a Category should affect the created
+        instance's attributes.
+        """
+        title = 'Test Category'
+        parent = create_category(title='Parent Category')
+
+        category = models.Category.objects.create(title=title, parent=parent)
+
+        self.assertEqual(title, category.title)
+        self.assertEqual(parent, category.parent)
+
+    def test_delete_parent(self):
+        """ Test deleting a parent category.
+
+        If a parent category is deleted, its child categories should
+        have their parent set to NULL rather than being deleted.
+        """
+        parent = create_category(title='parent')
+        create_category(title='child', parent=parent)
+
+        parent.delete()
+
+        self.assertEqual(1, models.Category.objects.count())
+        self.assertEqual('child', models.Category.objects.get().title)
+
+    def test_string_conversion(self):
+        """ Test converting a Category instance to a string.
+
+        Converting a Category instance to a string should return the
+        instance's title.
+        """
+        category = models.Category(title='Test Category')
+
+        self.assertEqual(category.title, str(category))

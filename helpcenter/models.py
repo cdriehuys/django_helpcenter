@@ -23,3 +23,24 @@ class Article(models.Model):
     def __str__(self):
         """ Return the Article's title """
         return self.title
+
+
+class Category(models.Model):
+    """ Model to represent a category to contain articles """
+    title = models.CharField(
+        max_length=200,
+        db_index=True,
+        help_text="A category's title is restricted to 200 characters.",
+        verbose_name="Category Title")
+
+    parent = models.ForeignKey(
+        'Category',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        help_text="Categories can be nested as deep as you would like.",
+        verbose_name="Parent Category")
+
+    def __str__(self):
+        """ Return the Category's title """
+        return self.title
