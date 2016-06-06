@@ -10,17 +10,7 @@
 
     <h2>Categories</h2>
 
-    <div class='categories'>
-
-      {% for category in categories %}
-
-        <div class='category'>
-          <h3><a href='{% url "category-detail" category.pk %}'>{{ category.title }}</a></h3>
-        </div>
-
-      {% endfor %}
-
-    </div>
+    {% include 'helpcenter/snippets/category_listing.html' %}
 
   {% endif %}
 
@@ -28,17 +18,7 @@
 
     <h2>Articles</h2>
 
-    <div class='articles'>
-
-      {% for article in articles %}
-
-        <div class='article'>
-          <h3><a href='{% url "article-detail" article.pk %}'>{{ article.title }}</a></h3>
-        </div>
-
-      {% endfor %}
-
-    </div>
+    {% include 'helpcenter/snippets/article_listing.html' %}
 
   {% endif %}
 

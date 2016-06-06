@@ -1,0 +1,11 @@
+<div class='categories'>
+
+  {% for category in categories %}
+
+    <div class='category'>
+      <h3><a href='{% url "category-detail" %}'>{{ category.title }}</a></h3>
+    </div>
+
+  {% endfor %}
+
+</div>
