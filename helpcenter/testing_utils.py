@@ -9,7 +9,7 @@ CATEGORY_TITLE = 'Test Category'
 
 
 def create_article(title=ARTICLE_TITLE, body=ARTICLE_BODY,
-                   time_published=None):
+                   time_published=None, category=None):
     """ Create an article for testing with default values """
     data = {
         'title': title,
@@ -18,6 +18,9 @@ def create_article(title=ARTICLE_TITLE, body=ARTICLE_BODY,
 
     if time_published is not None:
         data['time_published'] = time_published
+
+    if category is not None:
+        data['category'] = category
 
     return models.Article.objects.create(**data)
 

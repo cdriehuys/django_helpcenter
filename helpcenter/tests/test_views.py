@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from helpcenter import utils
 from helpcenter.testing_utils import (
-    create_article, instance_to_queryset_string)
+    create_article, create_category, instance_to_queryset_string)
 
 
 class TestArticleDetailView(TestCase):
@@ -82,3 +82,55 @@ class TestArticleListView(TestCase):
         self.assertQuerysetEqual(
             response.context['articles'],
             expected)
+
+
+class TestCategoryDetailView(TestCase):
+    """ Test cases for the Category detail view """
+
+    def test_context_data(self):
+        """ Test adding additional context data.
+
+        The category detail view should add additional context to the
+        response such as the articles and categories that are children
+        of the current category.
+        """
+        category = create_category()
+        article = create_article(category=category)
+        create_article(title='No Category')
+        child = create_category(parent=category, title='child category')
+        create_category(title='No Parent')
+
+        url = utils.category_detail(category)
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertQuerysetEqual(
+            response.context['categories'],
+            [instance_to_queryset_string(child)])
+        self.assertQuerysetEqual(
+            response.context['articles'],
+            [instance_to_queryset_string(article)])
+
+    def test_invalid_pk(self):
+        """ Test getting the detail view with an invalid pk.
+
+        If no Category with the given pk exists, the page should 404.
+        """
+        url = utils.category_detail(pk=1)
+        response = self.client.get(url)
+
+        self.assertEqual(404, response.status_code)
+
+    def test_valid_pk(self):
+        """ Test getting the detail view of a category.
+
+        If there is a category with the given pk, its detail view should
+        be shown.
+        """
+        category = create_category()
+
+        url = utils.category_detail(category)
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(category, response.context['category'])
