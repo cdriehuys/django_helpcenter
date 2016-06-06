@@ -49,6 +49,10 @@ class Category(models.Model):
         help_text="Categories can be nested as deep as you would like.",
         verbose_name="Parent Category")
 
+    class Meta:
+        """ Meta options for the Category model """
+        verbose_name_plural = 'categories'
+
     def __str__(self):
         """ Return the Category's title """
         return self.title
