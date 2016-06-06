@@ -1,5 +1,8 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
+
+from helpcenter import utils
 
 
 class Article(models.Model):
@@ -31,6 +34,13 @@ class Article(models.Model):
     def __str__(self):
         """ Return the Article's title """
         return self.title
+
+    def get_parent_url(self):
+        """ Get the url of the instance's parent """
+        if self.category:
+            return utils.category_detail(self.category)
+
+        return reverse('index')
 
 
 class Category(models.Model):
