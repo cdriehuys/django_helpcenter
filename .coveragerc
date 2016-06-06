@@ -1,3 +1,6 @@
 [run]
 branch = True
+omit =
+    # test files
+    */tests/*
 source = helpcenter
