@@ -134,3 +134,39 @@ class TestCategoryDetailView(TestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(category, response.context['category'])
+
+
+class TestIndexView(TestCase):
+    """ Test cases for the index view """
+    url = reverse('index')
+
+    def test_article_listing(self):
+        """ Test which articles are listed in the index view.
+
+        Only articles with no category should be listed in this view.
+        """
+        article = create_article()
+        create_article(title='categorized', category=create_category())
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertQuerysetEqual(
+            response.context['articles'],
+            [instance_to_queryset_string(article)])
+
+    def test_category_listing(self):
+        """ Test which categories are listed in the index view.
+
+        Only categories with no parent category should be listed in this
+        view.
+        """
+        category = create_category()
+        create_category(parent=category)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertQuerysetEqual(
+            response.context['categories'],
+            [instance_to_queryset_string(category)])

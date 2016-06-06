@@ -9,4 +9,5 @@ urlpatterns = [
         name='article-detail'),
     url(r'categories/(?P<pk>[0-9]+)/$', views.CategoryDetailView.as_view(),
         name='category-detail'),
+    url(r'^', views.IndexView.as_view(), name='index'),
 ]
