@@ -117,6 +117,31 @@ class TestCategoryModel(TestCase):
         self.assertEqual(1, models.Category.objects.count())
         self.assertEqual('child', models.Category.objects.get().title)
 
+    def test_get_parent_url(self):
+        """ Test getting the url of a Category's parent container.
+
+        If the Category has a parent Category, the url of the parent
+        Category's detail view should be returned.
+        """
+        parent = create_category()
+        category = create_category(parent=parent)
+
+        expected = utils.category_detail(parent)
+
+        self.assertEqual(expected, category.get_parent_url())
+
+    def test_get_parent_url_no_parent(self):
+        """ Test getting the url of a Category's parent container.
+
+        If a Category has no parent Category, this method should return
+        the url of the index view.
+        """
+        category = create_category()
+
+        expected = reverse('index')
+
+        self.assertEqual(expected, category.get_parent_url())
+
     def test_string_conversion(self):
         """ Test converting a Category instance to a string.
 

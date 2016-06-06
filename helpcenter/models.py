@@ -66,3 +66,10 @@ class Category(models.Model):
     def __str__(self):
         """ Return the Category's title """
         return self.title
+
+    def get_parent_url(self):
+        """ Get the url of the instance's parent container """
+        if self.parent:
+            return utils.category_detail(self.parent)
+
+        return reverse('index')
