@@ -1,8 +1,9 @@
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
 
-from helpcenter import models
-from helpcenter.testing_utils import create_category
+from helpcenter import models, utils
+from helpcenter.testing_utils import create_article, create_category
 
 
 class TestArticleModel(TestCase):
@@ -48,6 +49,31 @@ class TestArticleModel(TestCase):
 
         self.assertIsNone(article.category)
         self.assertTrue(start <= article.time_published <= end)
+
+    def test_get_parent_url(self):
+        """ Test getting the url of an Article's parent page.
+
+        If an article has a Category, this method should return the url
+        of the detail view for the parent Category.
+        """
+        category = create_category()
+        article = create_article(category=category)
+
+        expected = utils.category_detail(category)
+
+        self.assertEqual(expected, article.get_parent_url())
+
+    def test_get_parent_url_no_parent(self):
+        """ Test getting the url of an Article's parent page.
+
+        If an article does not have a Category, this method should
+        return the url of the index view.
+        """
+        article = create_article()
+
+        expected = reverse('index')
+
+        self.assertEqual(expected, article.get_parent_url())
 
     def test_string_conversion(self):
         """ Test converting an Article to a string.

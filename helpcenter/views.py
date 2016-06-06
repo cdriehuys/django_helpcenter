@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.views import generic
 
 from helpcenter import models
@@ -29,5 +30,26 @@ class CategoryDetailView(generic.DetailView):
 
         child_categories = models.Category.objects.filter(parent=self.object)
         context['categories'] = child_categories
+
+        return context
+
+
+class IndexView(generic.View):
+    """ View for the helpcenter index (home page) """
+    template_name = 'helpcenter/index.html'
+
+    def get(self, request, *args, **kwargs):
+        """ Handle get requests """
+        return render(request, self.template_name, self.get_context_data())
+
+    def get_context_data(self, *args, **kwargs):
+        """ Get context data for a request """
+        context = {}
+
+        articles = models.Article.objects.filter(category=None)
+        context['articles'] = articles
+
+        categories = models.Category.objects.filter(category=None)
+        context['categories'] = categories
 
         return context
