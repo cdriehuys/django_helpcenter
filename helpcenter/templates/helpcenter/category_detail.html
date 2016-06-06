@@ -10,17 +10,7 @@
 
     <h2>Sub Categories</h2>
 
-    <div class='categories'>
-
-      {% for child in categories %}
-
-        <div class='category'>
-          <h3><a href='{% url "category-detail" child.pk %}'>{{ child.title }}</a></h3>
-        </div>
-
-      {% endfor %}
-
-    </div>
+    {% include 'helpcenter/snippets/category_listing.html' %}
 
   {% endif %}
 
