@@ -10,6 +10,6 @@
     {{ article.body|safe }}
   </div>
 
-  <a href='{% url "article-list" %}'>Back to Article List</a>
+  <a href='{{ article.get_parent_url }}'>Back</a>
 
 {% endblock %}
