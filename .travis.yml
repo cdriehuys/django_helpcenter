@@ -32,11 +32,10 @@ before_script:
   - flake8 .
 
 # run tests
-script: ./manage.py test --with-coverage
+script: ./manage.py test
 
 # publish coverage reports
 after_success:
-  - coverage report
   - codecov
 
 # Only send emails about failures
