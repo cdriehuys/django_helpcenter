@@ -1,0 +1,45 @@
+{% extends 'helpcenter/base.html' %}
+
+{% block page_title %}{{ category.title }}{% endblock %}
+
+{% block content %}
+
+  <h1>{{ category.title }}</h1>
+
+  {% if categories %}
+
+    <h2>Sub Categories</h2>
+
+    <div class='categories'>
+
+      {% for child in categories %}
+
+        <div class='category'>
+          <h3><a href='{% url "category-detail" child.pk %}'>{{ child.title }}</a></h3>
+        </div>
+
+      {% endfor %}
+
+    </div>
+
+  {% endif %}
+
+  {% if articles %}
+
+    <h2>Articles</h2>
+
+    <div class='articles'>
+
+      {% for article in articles %}
+
+        <div class='article'>
+          <h3><a href='{% url "article-detail" article.pk %}'>{{ article.title }}</a></h3>
+        </div>
+
+      {% endfor %}
+
+    </div>
+
+  {% endif %}
+
+{% endblock %}
