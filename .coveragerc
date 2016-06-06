@@ -3,4 +3,10 @@ branch = True
 omit =
     # test files
     */tests/*
+
+    # migrations
+    */migrations/*
+
+    # testing utilities
+    */testing_utils.py
 source = helpcenter
