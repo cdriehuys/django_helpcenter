@@ -49,7 +49,7 @@ class IndexView(generic.View):
         articles = models.Article.objects.filter(category=None)
         context['articles'] = articles
 
-        categories = models.Category.objects.filter(category=None)
+        categories = models.Category.objects.filter(parent=None)
         context['categories'] = categories
 
         return context
