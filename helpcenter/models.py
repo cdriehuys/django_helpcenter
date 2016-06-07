@@ -29,7 +29,7 @@ class Article(models.Model):
         max_length=200,
         db_index=True,
         help_text="An article title is restricted to 200 characters.",
-        verbose_name="Article")
+        verbose_name="Article Title")
 
     def __str__(self):
         """ Return the Article's title """
