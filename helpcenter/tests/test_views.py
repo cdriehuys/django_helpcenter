@@ -162,7 +162,7 @@ class TestIndexView(TestCase):
         view.
         """
         category = create_category()
-        create_category(parent=category)
+        create_category(parent=category, title='child category')
 
         response = self.client.get(self.url)
 
