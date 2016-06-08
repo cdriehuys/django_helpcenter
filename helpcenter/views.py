@@ -83,7 +83,7 @@ class SearchView(generic.View):
 
     def get_search_results(self, query):
         """ Return the results of a given query """
-        if query is None:
+        if not query:
             return models.Article.objects.none()
 
         return self.search_backend.search(query)
