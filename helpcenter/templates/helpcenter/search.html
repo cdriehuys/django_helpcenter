@@ -1,0 +1,40 @@
+{% extends 'helpcenter/base.html' %}
+
+{% block page_title %}Search{% endblock %}
+
+{% block content %}
+
+  <h1>Search the Help Center</h1>
+
+  <a href='{% url "index" %}'>Home</a>
+
+  <form id='search-form' method='get'>
+
+    <label for='search-input'>Search:</label><br />
+    <input type='text' id='search-input' name='q' placeholder='Enter your search term' /><br />
+
+    <button type='submit'>Search</button>
+
+  </form>
+
+  {% if query %}
+
+    <div class='search-results'>
+
+      <h3>Matches for '{{ query }}':</h3>
+
+      {% if articles %}
+
+        {% include 'helpcenter/snippets/article_listing.html' %}
+
+      {% else %}
+
+        <h4>There were no matches for your search</h4>
+
+      {% endif %}
+
+    </div>
+
+  {% endif %}
+
+{% endblock %}
