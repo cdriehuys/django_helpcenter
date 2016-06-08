@@ -73,3 +73,12 @@ class Category(models.Model):
             return utils.category_detail(self.parent)
 
         return reverse('index')
+
+    @property
+    def num_articles(self):
+        articles = Article.objects.filter(category=self).count()
+
+        for category in self.category_set.all():
+            articles += category.num_articles
+
+        return articles

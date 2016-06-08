@@ -142,6 +142,29 @@ class TestCategoryModel(TestCase):
 
         self.assertEqual(expected, category.get_parent_url())
 
+    def test_num_articles(self):
+        """ Test num_articles property with articles in category.
+
+        This property should return the number of articles in a
+        Category.
+        """
+        category = create_category()
+        create_article(category=category)
+
+        self.assertEqual(1, category.num_articles)
+
+    def test_num_articles_nested(self):
+        """ Test num_articles property with nested categories.
+
+        The property should loop through all the instance's child
+        categories and include the number of articles in each of them.
+        """
+        category = create_category()
+        child = create_category(title='child', parent=category)
+        create_article(category=child)
+
+        self.assertEqual(1, category.num_articles)
+
     def test_string_conversion(self):
         """ Test converting a Category instance to a string.
 
