@@ -170,3 +170,36 @@ class TestIndexView(TestCase):
         self.assertQuerysetEqual(
             response.context['categories'],
             [instance_to_queryset_string(category)])
+
+
+class TestSearchView(TestCase):
+    """ Test cases for the search view """
+    url = reverse('search')
+
+    def test_get(self):
+        """ Test submitting a plain GET request.
+
+        The initial GET request to the page should display a search box.
+        """
+        response = self.client.get(self.url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertFalse(response.context['articles'].exists())
+        self.assertIsNone(response.context['query'])
+
+    def test_get_with_query(self):
+        """ Test submitting a GET request with a search query.
+
+        If there is a search query in the url, the response should
+        contain context objects with the query and its results.
+        """
+        article = create_article(title='Test Article')
+
+        url = '{}?q={}'.format(self.url, 'test')
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual('test', response.context['query'])
+        self.assertQuerysetEqual(
+            response.context['articles'],
+            [instance_to_queryset_string(article)])
