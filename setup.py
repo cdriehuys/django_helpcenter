@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='django_helpcenter',
-    version='0.2.3',
+    version='0.3.0',
     description='Django app for creating a help section',
     long_description=readme(),
     url='http://github.com/smalls12/django_helpcenter',
