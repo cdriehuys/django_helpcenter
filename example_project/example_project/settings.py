@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # Third party apps
     'helpcenter',
+    'rest_framework',
 ]
 
 MIDDLEWARE_CLASSES = [

@@ -60,6 +60,7 @@ INSTALLED_APPS = (
 
     # Third party apps
     'django_nose',
+    'rest_framework',
 
     # Custom apps
     'helpcenter',
