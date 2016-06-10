@@ -10,13 +10,6 @@ class ArticleDetailView(generic.DetailView):
     model = models.Article
 
 
-class ArticleListView(generic.ListView):
-    """ View for listing articles """
-    context_object_name = 'articles'
-    model = models.Article
-    ordering = ['title']
-
-
 class CategoryDetailView(generic.DetailView):
     """ View for viewing a Category's details """
     model = models.Category
