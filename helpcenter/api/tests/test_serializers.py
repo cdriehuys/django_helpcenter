@@ -19,6 +19,7 @@ class TestArticleSerializer(TestCase):
         data = {
             'title': 'Test Article',
             'body': '<p>Rich <strong>text</strong></p>',
+            'category': None,
         }
         serializer = serializers.ArticleSerializer(data=data)
 
@@ -36,6 +37,7 @@ class TestArticleSerializer(TestCase):
 
         expected_dict = {
             'body': article.body,
+            'category': article.category,
             'id': article.id,
             'time_published': article.time_published.isoformat(),
             'title': article.title,

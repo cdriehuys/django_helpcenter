@@ -185,6 +185,7 @@ class TestArticleViewSet(AuthMixin, APITestCase):
 
         article = create_article()
         data = serializers.ArticleSerializer(article).data
+        data['category'] = ''
         data['title'] = 'My Awesome Title'
 
         url = reverse('api:article-detail', kwargs={'pk': article.pk})
