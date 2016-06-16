@@ -10,3 +10,10 @@ class ArticleViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     queryset = models.Article.objects.all()
     serializer_class = serializers.ArticleSerializer
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    """ View set for the Category model """
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
+    queryset = models.Category.objects.all()
+    serializer_class = serializers.CategorySerializer
