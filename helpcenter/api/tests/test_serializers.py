@@ -2,13 +2,21 @@ import json
 
 from django.test import TestCase
 
+from rest_framework.test import APIRequestFactory
+
 from helpcenter import models
 from helpcenter.api import serializers
+from helpcenter.api.testing_utils import full_url
 from helpcenter.testing_utils import create_article
 
 
 class TestArticleSerializer(TestCase):
     """ Test cases for the Article serializer """
+
+    def setUp(self):
+        """ Create request factory for hyperlinked serializer """
+        factory = APIRequestFactory()
+        self.request = factory.get('api:article-list')
 
     def test_deserialize(self):
         """ Test deserializing an Article.
@@ -19,6 +27,7 @@ class TestArticleSerializer(TestCase):
         data = {
             'title': 'Test Article',
             'body': '<p>Rich <strong>text</strong></p>',
+            'category': None,
         }
         serializer = serializers.ArticleSerializer(data=data)
 
@@ -32,10 +41,13 @@ class TestArticleSerializer(TestCase):
     def test_serialize(self):
         """ Test serializing an article """
         article = create_article()
-        serializer = serializers.ArticleSerializer(article)
+        serializer = serializers.ArticleSerializer(
+            article, context={'request': self.request})
 
         expected_dict = {
             'body': article.body,
+            'category': article.category,
+            'url': full_url('api:article-detail', kwargs={'pk': article.pk}),
             'id': article.id,
             'time_published': article.time_published.isoformat(),
             'title': article.title,
