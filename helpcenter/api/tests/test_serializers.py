@@ -56,6 +56,30 @@ class TestArticleSerializer(TestCase):
 
         self.assertJSONEqual(expected, serializer.data)
 
+    def test_serialize_with_category(self):
+        """ Test serializing an article with a category.
+
+        If an article has a category, that category's url should be
+        contained in the serializer.
+        """
+        category = create_category()
+        article = create_article(category=category)
+        serializer = serializers.ArticleSerializer(
+            article, context={'request': self.request})
+
+        expected_dict = {
+            'body': article.body,
+            'category': full_url(
+                'api:category-detail', kwargs={'pk': category.pk}),
+            'id': article.id,
+            'time_published': article.time_published.isoformat(),
+            'title': article.title,
+            'url': full_url('api:article-detail', kwargs={'pk': article.pk}),
+        }
+        expected = json.dumps(expected_dict)
+
+        self.assertJSONEqual(expected, serializer.data)
+
     def test_update(self):
         """ Test updating an existing Article.
 

@@ -8,6 +8,9 @@ class ArticleSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         extra_kwargs = {
+            'category': {
+                'view_name': 'api:category-detail',
+            },
             'url': {
                 'view_name': 'api:article-detail',
             },
