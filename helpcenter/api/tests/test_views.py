@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.core.urlresolvers import reverse
 
-from rest_framework.test import APITestCase
+from rest_framework.test import APIRequestFactory, APITestCase
 
 from helpcenter import models
 from helpcenter.api import serializers
@@ -38,6 +38,12 @@ class AuthMixin:
 
 class TestArticleViewSet(AuthMixin, APITestCase):
     """ Test cases for the article view set """
+    factory = APIRequestFactory()
+
+    @staticmethod
+    def _get_request(viewname, kwargs=None):
+        """ Create a request for the given view """
+        return TestArticleViewSet.factory.get(reverse(viewname, kwargs=kwargs))
 
     def test_create(self):
         """ Test creating an article.
@@ -113,7 +119,9 @@ class TestArticleViewSet(AuthMixin, APITestCase):
         serialized version of that article.
         """
         article = create_article()
-        serializer = serializers.ArticleSerializer(article)
+        serializer = serializers.ArticleSerializer(
+            article, context={'request': self._get_request(
+                'api:article-detail', kwargs={'pk': article.pk})})
 
         url = reverse('api:article-detail', kwargs={'pk': article.pk})
         response = self.client.get(url)
@@ -129,8 +137,11 @@ class TestArticleViewSet(AuthMixin, APITestCase):
         """
         article = create_article()
         article2 = create_article(title='Test Article 2')
+        context = {
+            'request': self._get_request('api:article-list')
+        }
         serializer = serializers.ArticleSerializer(
-            [article, article2], many=True)
+            [article, article2], many=True, context=context)
 
         url = reverse('api:article-list')
         response = self.client.get(url)
@@ -184,7 +195,9 @@ class TestArticleViewSet(AuthMixin, APITestCase):
         self.login()
 
         article = create_article()
-        data = serializers.ArticleSerializer(article).data
+        data = serializers.ArticleSerializer(
+            article, context={'request': self._get_request(
+                'api:article-detail', kwargs={'pk': article.pk})}).data
         data['category'] = ''
         data['title'] = 'My Awesome Title'
 
@@ -200,7 +213,9 @@ class TestArticleViewSet(AuthMixin, APITestCase):
         An unauthenticated user should not be able to update an article.
         """
         article = create_article()
-        data = serializers.ArticleSerializer(article).data
+        data = serializers.ArticleSerializer(
+            article, context={'request': self._get_request(
+                'api:article-detail', kwargs={'pk': article.pk})}).data
         data['title'] = 'My Awesome Title'
 
         url = reverse('api:article-detail', kwargs={'pk': article.pk})
