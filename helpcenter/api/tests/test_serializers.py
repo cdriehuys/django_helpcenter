@@ -99,6 +99,25 @@ class TestCategorySerializer(TestCase):
         self.assertEqual(data['title'], category.title)
         self.assertEqual(data['parent'], category.parent)
 
+    def test_deserialize_with_parent(self):
+        """ Test deserializing a Category with a parent Category.
+
+        The serializer should be able to create a Category with a
+        parent if the parent's id is given.
+        """
+        parent = create_category(title='Parent Category')
+        data = {
+            'title': 'Test Category',
+            'parent': parent.id,
+        }
+        serializer = serializers.CategorySerializer(data=data)
+
+        self.assertTrue(serializer.is_valid())
+
+        category = serializer.save()
+
+        self.assertEqual(parent, category.parent)
+
     def test_serialize(self):
         """ Test serializing a Category instance.
 
