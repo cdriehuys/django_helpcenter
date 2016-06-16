@@ -7,7 +7,7 @@ from rest_framework.test import APIRequestFactory
 from helpcenter import models
 from helpcenter.api import serializers
 from helpcenter.api.testing_utils import full_url
-from helpcenter.testing_utils import create_article
+from helpcenter.testing_utils import create_article, create_category
 
 
 class TestArticleSerializer(TestCase):
@@ -74,4 +74,65 @@ class TestArticleSerializer(TestCase):
         updated = serializer.save()
 
         self.assertEqual(1, models.Article.objects.count())
+        self.assertEqual(data['title'], updated.title)
+
+
+class TestCategorySerializer(TestCase):
+    """ Test cases for the Category serializer """
+
+    def test_deserialize(self):
+        """ Test deserializing data into a Category instance.
+
+        Passing valid data to the serializer should allow the serializer
+        to construct a new Category instance.
+        """
+        data = {
+            'title': 'Test Category',
+            'parent': None,
+        }
+        serializer = serializers.CategorySerializer(data=data)
+
+        self.assertTrue(serializer.is_valid())
+
+        category = serializer.save()
+
+        self.assertEqual(data['title'], category.title)
+        self.assertEqual(data['parent'], category.parent)
+
+    def test_serialize(self):
+        """ Test serializing a Category instance.
+
+        Serializing a Category instance should return a JSON
+        representation of the instance.
+        """
+        category = create_category()
+        serializer = serializers.CategorySerializer(category)
+
+        expected_dict = {
+            'id': category.id,
+            'parent': category.parent,
+            'title': category.title,
+        }
+        expected = json.dumps(expected_dict)
+
+        self.assertJSONEqual(expected, serializer.data)
+
+    def test_update(self):
+        """ Test updating an existing Category.
+
+        If data is passed to an existing Category, it should update the
+        existing instance's data.
+        """
+        category = create_category()
+        data = {
+            'title': 'Better Title'
+        }
+        serializer = serializers.CategorySerializer(
+            category, data=data, partial=True)
+
+        self.assertTrue(serializer.is_valid())
+
+        updated = serializer.save()
+
+        self.assertEqual(1, models.Category.objects.count())
         self.assertEqual(data['title'], updated.title)

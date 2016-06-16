@@ -17,3 +17,12 @@ class ArticleSerializer(serializers.HyperlinkedModelSerializer):
         )
         model = models.Article
         read_only_fields = ('id',)
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    """ Serializer for the Category model """
+
+    class Meta:
+        fields = ('id', 'parent', 'title')
+        model = models.Category
+        read_only_fields = ('id',)
