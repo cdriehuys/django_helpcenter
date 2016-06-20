@@ -27,7 +27,7 @@ class TestArticleSerializer(TestCase):
         data = {
             'title': 'Test Article',
             'body': '<p>Rich <strong>text</strong></p>',
-            'category': None,
+            'category_id': None,
         }
         serializer = serializers.ArticleSerializer(data=data)
 
@@ -47,6 +47,7 @@ class TestArticleSerializer(TestCase):
         expected_dict = {
             'body': article.body,
             'category': article.category,
+            'category_id': None,
             'url': full_url('api:article-detail', kwargs={'pk': article.pk}),
             'id': article.id,
             'time_published': article.time_published.isoformat(),
@@ -71,6 +72,7 @@ class TestArticleSerializer(TestCase):
             'body': article.body,
             'category': full_url(
                 'api:category-detail', kwargs={'pk': category.pk}),
+            'category_id': article.category.id,
             'id': article.id,
             'time_published': article.time_published.isoformat(),
             'title': article.title,
@@ -104,6 +106,11 @@ class TestArticleSerializer(TestCase):
 class TestCategorySerializer(TestCase):
     """ Test cases for the Category serializer """
 
+    def setUp(self):
+        """ Create request factory for hyperlinked serializer """
+        factory = APIRequestFactory()
+        self.request = factory.get('api:category-list')
+
     def test_deserialize(self):
         """ Test deserializing data into a Category instance.
 
@@ -112,7 +119,7 @@ class TestCategorySerializer(TestCase):
         """
         data = {
             'title': 'Test Category',
-            'parent': None,
+            'parent_id': None,
         }
         serializer = serializers.CategorySerializer(data=data)
 
@@ -121,7 +128,7 @@ class TestCategorySerializer(TestCase):
         category = serializer.save()
 
         self.assertEqual(data['title'], category.title)
-        self.assertEqual(data['parent'], category.parent)
+        self.assertEqual(data['parent_id'], category.parent)
 
     def test_deserialize_with_parent(self):
         """ Test deserializing a Category with a parent Category.
@@ -132,11 +139,11 @@ class TestCategorySerializer(TestCase):
         parent = create_category(title='Parent Category')
         data = {
             'title': 'Test Category',
-            'parent': parent.id,
+            'parent_id': parent.id,
         }
         serializer = serializers.CategorySerializer(data=data)
 
-        self.assertTrue(serializer.is_valid())
+        self.assertTrue(serializer.is_valid(), msg=serializer.errors)
 
         category = serializer.save()
 
@@ -148,17 +155,26 @@ class TestCategorySerializer(TestCase):
         Serializing a Category instance should return a JSON
         representation of the instance.
         """
-        category = create_category()
-        serializer = serializers.CategorySerializer(category)
+        parent = create_category(title='Parent Category')
+        category = create_category(parent=parent)
+        serializer = serializers.CategorySerializer(
+            category, context={'request': self.request})
 
         expected_dict = {
             'id': category.id,
-            'parent': category.parent,
+            'parent': full_url(
+                'api:category-detail', kwargs={'pk': parent.pk}),
+            'parent_id': parent.id,
             'title': category.title,
+            'url': full_url('api:category-detail', kwargs={'pk': category.pk}),
         }
         expected = json.dumps(expected_dict)
 
-        self.assertJSONEqual(expected, serializer.data)
+        self.assertJSONEqual(
+            expected,
+            serializer.data,
+            msg='\nExpected: {}\n  Actual: {}'.format(
+                expected, serializer.data))
 
     def test_update(self):
         """ Test updating an existing Category.

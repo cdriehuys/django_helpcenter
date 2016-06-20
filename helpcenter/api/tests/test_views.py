@@ -198,13 +198,13 @@ class TestArticleViewSet(AuthMixin, APITestCase):
         data = serializers.ArticleSerializer(
             article, context={'request': self._get_request(
                 'api:article-detail', kwargs={'pk': article.pk})}).data
-        data['category'] = ''
+        data['category_id'] = ''
         data['title'] = 'My Awesome Title'
 
         url = reverse('api:article-detail', kwargs={'pk': article.pk})
         response = self.client.put(url, data)
 
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(200, response.status_code, msg=response.data)
         self.assertEqual(data['title'], models.Article.objects.get().title)
 
     def test_update_unauthenticated(self):
@@ -385,7 +385,7 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
         data = serializers.CategorySerializer(
             category, context={'request': self._get_request(
                 'api:category-detail', kwargs={'pk': category.pk})}).data
-        data['parent'] = ''
+        data['parent_id'] = ''
         data['title'] = 'My Awesome Title'
 
         url = reverse('api:category-detail', kwargs={'pk': category.pk})
