@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.core.urlresolvers import reverse
@@ -407,5 +409,65 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
 
         url = reverse('api:category-detail', kwargs={'pk': category.pk})
         response = self.client.put(url, data)
+
+        self.assertEqual(403, response.status_code)
+
+
+class TestPermissionsView(AuthMixin, APITestCase):
+    """ Test cases for the permissions view """
+    url = reverse('api:permissions')
+
+    def setUp(self, *args, **kwargs):
+        """ Create a dict containing the default permissions """
+        super(TestPermissionsView, self).setUp(*args, **kwargs)
+
+        self.default_permissions = {
+            'add_article': False,
+            'add_category': False,
+            'change_article': False,
+            'change_category': False,
+            'delete_article': False,
+            'delete_category': False,
+        }
+
+    def test_all_permissions(self):
+        """ Test the view as a user with all permissions.
+
+        If a user has all permissions, the response should return true
+        for each permission.
+        """
+        self.user.is_superuser = True
+        self.user.save()
+        self.login()
+
+        response = self.client.get(self.url)
+
+        expected_dict = {k: True for k in self.default_permissions}
+        expected = json.dumps(expected_dict)
+
+        self.assertJSONEqual(expected, response.data)
+
+    def test_no_permissions(self):
+        """ Test the view as a user with no permissions.
+
+        If the user has no permissions, the response should return false
+        for each permission.
+        """
+        self.login()
+
+        response = self.client.get(self.url)
+
+        expected_dict = self.default_permissions.copy()
+        expected = json.dumps(expected_dict)
+
+        self.assertJSONEqual(expected, response.data)
+
+    def test_unauthenticated(self):
+        """ Test the view as an unauthenticated user.
+
+        If an unauthenticated user tries to access the view, they should
+        receive a 403 response.
+        """
+        response = self.client.get(self.url)
 
         self.assertEqual(403, response.status_code)
