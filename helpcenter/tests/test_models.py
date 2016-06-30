@@ -71,7 +71,7 @@ class TestArticleModel(TestCase):
         """
         article = create_article()
 
-        expected = reverse('index')
+        expected = reverse('helpcenter:index')
 
         self.assertEqual(expected, article.get_parent_url())
 
@@ -138,7 +138,7 @@ class TestCategoryModel(TestCase):
         """
         category = create_category()
 
-        expected = reverse('index')
+        expected = reverse('helpcenter:index')
 
         self.assertEqual(expected, category.get_parent_url())
 

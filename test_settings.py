@@ -19,7 +19,7 @@ DATABASES = {
 }
 
 
-ROOT_URLCONF = 'helpcenter.urls'
+ROOT_URLCONF = 'test_urls'
 
 
 TEMPLATES = [

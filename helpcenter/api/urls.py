@@ -10,6 +10,8 @@ router.register(r'articles', views.ArticleViewSet)
 router.register(r'categories', views.CategoryViewSet)
 
 
+app_name = 'helpcenter-api'
+
 urlpatterns = [
     url(r'^permissions/$', views.PermissionsView.as_view(),
         name='permissions'),
