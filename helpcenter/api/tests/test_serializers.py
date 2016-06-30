@@ -16,7 +16,7 @@ class TestArticleSerializer(TestCase):
     def setUp(self):
         """ Create request factory for hyperlinked serializer """
         factory = APIRequestFactory()
-        self.request = factory.get('api:article-list')
+        self.request = factory.get('helpcenter:helpcenter-api:article-list')
 
     def test_deserialize(self):
         """ Test deserializing an Article.
@@ -48,7 +48,8 @@ class TestArticleSerializer(TestCase):
             'body': article.body,
             'category': article.category,
             'category_id': None,
-            'url': full_url('api:article-detail', kwargs={'pk': article.pk}),
+            'url': full_url('help:api:article-detail',
+                            kwargs={'pk': article.pk}),
             'id': article.id,
             'time_published': article.time_published.isoformat(),
             'title': article.title,
@@ -71,12 +72,14 @@ class TestArticleSerializer(TestCase):
         expected_dict = {
             'body': article.body,
             'category': full_url(
-                'api:category-detail', kwargs={'pk': category.pk}),
+                'helpcenter:helpcenter-api:category-detail',
+                kwargs={'pk': category.pk}),
             'category_id': article.category.id,
             'id': article.id,
             'time_published': article.time_published.isoformat(),
             'title': article.title,
-            'url': full_url('api:article-detail', kwargs={'pk': article.pk}),
+            'url': full_url('help:api:article-detail',
+                            kwargs={'pk': article.pk}),
         }
         expected = json.dumps(expected_dict)
 
@@ -109,7 +112,7 @@ class TestCategorySerializer(TestCase):
     def setUp(self):
         """ Create request factory for hyperlinked serializer """
         factory = APIRequestFactory()
-        self.request = factory.get('api:category-list')
+        self.request = factory.get('helpcenter:helpcenter-api:category-list')
 
     def test_deserialize(self):
         """ Test deserializing data into a Category instance.
@@ -163,10 +166,12 @@ class TestCategorySerializer(TestCase):
         expected_dict = {
             'id': category.id,
             'parent': full_url(
-                'api:category-detail', kwargs={'pk': parent.pk}),
+                'helpcenter:helpcenter-api:category-detail',
+                kwargs={'pk': parent.pk}),
             'parent_id': parent.id,
             'title': category.title,
-            'url': full_url('api:category-detail', kwargs={'pk': category.pk}),
+            'url': full_url('help:api:category-detail',
+                            kwargs={'pk': category.pk}),
         }
         expected = json.dumps(expected_dict)
 

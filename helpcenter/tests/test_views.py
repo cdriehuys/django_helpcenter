@@ -85,7 +85,7 @@ class TestCategoryDetailView(TestCase):
 
 class TestIndexView(TestCase):
     """ Test cases for the index view """
-    url = reverse('index')
+    url = reverse('helpcenter:index')
 
     def test_article_listing(self):
         """ Test which articles are listed in the index view.
@@ -121,7 +121,7 @@ class TestIndexView(TestCase):
 
 class TestSearchView(TestCase):
     """ Test cases for the search view """
-    url = reverse('search')
+    url = reverse('helpcenter:search')
 
     def test_get(self):
         """ Test submitting a plain GET request.

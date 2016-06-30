@@ -13,7 +13,7 @@ def article_detail(article=None, pk=None):
         'pk': pk,
     }
 
-    return reverse('article-detail', kwargs=reverse_kwargs)
+    return reverse('helpcenter:article-detail', kwargs=reverse_kwargs)
 
 
 def category_detail(category=None, pk=None):
@@ -28,4 +28,4 @@ def category_detail(category=None, pk=None):
         'pk': pk,
     }
 
-    return reverse('category-detail', kwargs=reverse_kwargs)
+    return reverse('helpcenter:category-detail', kwargs=reverse_kwargs)

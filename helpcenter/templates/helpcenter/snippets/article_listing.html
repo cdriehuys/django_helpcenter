@@ -3,7 +3,7 @@
   {% for article in articles %}
 
     <div class='article'>
-      <h3><a href='{% url "article-detail" article.pk %}'>{{ article.title }}</a></h3>
+      <h3><a href='{% url "helpcenter:article-detail" article.pk %}'>{{ article.title }}</a></h3>
     </div>
 
   {% endfor %}
