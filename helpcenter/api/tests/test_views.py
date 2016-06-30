@@ -61,7 +61,7 @@ class TestArticleViewSet(AuthMixin, APITestCase):
             'body': 'Test body <em>text</em>.',
         }
 
-        url = reverse('api:article-list')
+        url = reverse('helpcenter:helpcenter-api:article-list')
         response = self.client.post(url, data)
 
         self.assertEqual(201, response.status_code)
@@ -78,7 +78,7 @@ class TestArticleViewSet(AuthMixin, APITestCase):
             'body': 'Test body <em>text</em>.',
         }
 
-        url = reverse('api:article-list')
+        url = reverse('helpcenter:helpcenter-api:article-list')
         response = self.client.post(url, data)
 
         self.assertEqual(403, response.status_code)
@@ -94,7 +94,8 @@ class TestArticleViewSet(AuthMixin, APITestCase):
 
         article = create_article()
 
-        url = reverse('api:article-detail', kwargs={'pk': article.pk})
+        url = reverse('helpcenter:helpcenter-api:article-detail',
+                      kwargs={'pk': article.pk})
         response = self.client.delete(url)
 
         self.assertEqual(204, response.status_code)
@@ -108,7 +109,8 @@ class TestArticleViewSet(AuthMixin, APITestCase):
         """
         article = create_article()
 
-        url = reverse('api:article-detail', kwargs={'pk': article.pk})
+        url = reverse('helpcenter:helpcenter-api:article-detail',
+                      kwargs={'pk': article.pk})
         response = self.client.delete(url)
 
         self.assertEqual(403, response.status_code)
@@ -123,9 +125,11 @@ class TestArticleViewSet(AuthMixin, APITestCase):
         article = create_article()
         serializer = serializers.ArticleSerializer(
             article, context={'request': self._get_request(
-                'api:article-detail', kwargs={'pk': article.pk})})
+                'helpcenter:helpcenter-api:article-detail',
+                kwargs={'pk': article.pk})})
 
-        url = reverse('api:article-detail', kwargs={'pk': article.pk})
+        url = reverse('helpcenter:helpcenter-api:article-detail',
+                      kwargs={'pk': article.pk})
         response = self.client.get(url)
 
         self.assertEqual(200, response.status_code)
@@ -140,12 +144,13 @@ class TestArticleViewSet(AuthMixin, APITestCase):
         article = create_article()
         article2 = create_article(title='Test Article 2')
         context = {
-            'request': self._get_request('api:article-list')
+            'request': self._get_request(
+                'helpcenter:helpcenter-api:article-list')
         }
         serializer = serializers.ArticleSerializer(
             [article, article2], many=True, context=context)
 
-        url = reverse('api:article-list')
+        url = reverse('helpcenter:helpcenter-api:article-list')
         response = self.client.get(url)
 
         self.assertEqual(200, response.status_code)
@@ -165,7 +170,8 @@ class TestArticleViewSet(AuthMixin, APITestCase):
             'title': 'My Awesome Title'
         }
 
-        url = reverse('api:article-detail', kwargs={'pk': article.pk})
+        url = reverse('helpcenter:helpcenter-api:article-detail',
+                      kwargs={'pk': article.pk})
         response = self.client.patch(url, data)
 
         self.assertEqual(200, response.status_code)
@@ -182,7 +188,8 @@ class TestArticleViewSet(AuthMixin, APITestCase):
             'title': 'My Awesome Title'
         }
 
-        url = reverse('api:article-detail', kwargs={'pk': article.pk})
+        url = reverse('helpcenter:helpcenter-api:article-detail',
+                      kwargs={'pk': article.pk})
         response = self.client.patch(url, data)
 
         self.assertEqual(403, response.status_code)
@@ -199,11 +206,13 @@ class TestArticleViewSet(AuthMixin, APITestCase):
         article = create_article()
         data = serializers.ArticleSerializer(
             article, context={'request': self._get_request(
-                'api:article-detail', kwargs={'pk': article.pk})}).data
+                'helpcenter:helpcenter-api:article-detail',
+                kwargs={'pk': article.pk})}).data
         data['category_id'] = ''
         data['title'] = 'My Awesome Title'
 
-        url = reverse('api:article-detail', kwargs={'pk': article.pk})
+        url = reverse('helpcenter:helpcenter-api:article-detail',
+                      kwargs={'pk': article.pk})
         response = self.client.put(url, data)
 
         self.assertEqual(200, response.status_code, msg=response.data)
@@ -217,10 +226,12 @@ class TestArticleViewSet(AuthMixin, APITestCase):
         article = create_article()
         data = serializers.ArticleSerializer(
             article, context={'request': self._get_request(
-                'api:article-detail', kwargs={'pk': article.pk})}).data
+                'helpcenter:helpcenter-api:article-detail',
+                kwargs={'pk': article.pk})}).data
         data['title'] = 'My Awesome Title'
 
-        url = reverse('api:article-detail', kwargs={'pk': article.pk})
+        url = reverse('helpcenter:helpcenter-api:article-detail',
+                      kwargs={'pk': article.pk})
         response = self.client.put(url, data)
 
         self.assertEqual(403, response.status_code)
@@ -249,7 +260,7 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
             'title': 'Test Category',
         }
 
-        url = reverse('api:category-list')
+        url = reverse('helpcenter:helpcenter-api:category-list')
         response = self.client.post(url, data)
 
         self.assertEqual(201, response.status_code)
@@ -265,7 +276,7 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
             'title': 'Test Category',
         }
 
-        url = reverse('api:category-list')
+        url = reverse('helpcenter:helpcenter-api:category-list')
         response = self.client.post(url, data)
 
         self.assertEqual(403, response.status_code)
@@ -281,7 +292,8 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
 
         category = create_category()
 
-        url = reverse('api:category-detail', kwargs={'pk': category.pk})
+        url = reverse('helpcenter:helpcenter-api:category-detail',
+                      kwargs={'pk': category.pk})
         response = self.client.delete(url)
 
         self.assertEqual(204, response.status_code)
@@ -295,7 +307,8 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
         """
         category = create_category()
 
-        url = reverse('api:category-detail', kwargs={'pk': category.pk})
+        url = reverse('helpcenter:helpcenter-api:category-detail',
+                      kwargs={'pk': category.pk})
         response = self.client.delete(url)
 
         self.assertEqual(403, response.status_code)
@@ -310,9 +323,11 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
         category = create_category()
         serializer = serializers.CategorySerializer(
             category, context={'request': self._get_request(
-                'api:category-detail', kwargs={'pk': category.pk})})
+                'helpcenter:helpcenter-api:category-detail',
+                kwargs={'pk': category.pk})})
 
-        url = reverse('api:category-detail', kwargs={'pk': category.pk})
+        url = reverse('helpcenter:helpcenter-api:category-detail',
+                      kwargs={'pk': category.pk})
         response = self.client.get(url)
 
         self.assertEqual(200, response.status_code)
@@ -327,12 +342,13 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
         category = create_category()
         category2 = create_category(title='Test Category 2')
         context = {
-            'request': self._get_request('api:category-list')
+            'request': self._get_request(
+                'helpcenter:helpcenter-api:category-list')
         }
         serializer = serializers.CategorySerializer(
             [category, category2], many=True, context=context)
 
-        url = reverse('api:category-list')
+        url = reverse('helpcenter:helpcenter-api:category-list')
         response = self.client.get(url)
 
         self.assertEqual(200, response.status_code)
@@ -352,7 +368,8 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
             'title': 'My Awesome Title'
         }
 
-        url = reverse('api:category-detail', kwargs={'pk': category.pk})
+        url = reverse('helpcenter:helpcenter-api:category-detail',
+                      kwargs={'pk': category.pk})
         response = self.client.patch(url, data)
 
         self.assertEqual(200, response.status_code)
@@ -369,7 +386,8 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
             'title': 'My Awesome Title'
         }
 
-        url = reverse('api:category-detail', kwargs={'pk': category.pk})
+        url = reverse('helpcenter:helpcenter-api:category-detail',
+                      kwargs={'pk': category.pk})
         response = self.client.patch(url, data)
 
         self.assertEqual(403, response.status_code)
@@ -386,11 +404,13 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
         category = create_category()
         data = serializers.CategorySerializer(
             category, context={'request': self._get_request(
-                'api:category-detail', kwargs={'pk': category.pk})}).data
+                'helpcenter:helpcenter-api:category-detail',
+                kwargs={'pk': category.pk})}).data
         data['parent_id'] = ''
         data['title'] = 'My Awesome Title'
 
-        url = reverse('api:category-detail', kwargs={'pk': category.pk})
+        url = reverse('helpcenter:helpcenter-api:category-detail',
+                      kwargs={'pk': category.pk})
         response = self.client.put(url, data)
 
         self.assertEqual(200, response.status_code, response.data)
@@ -404,10 +424,12 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
         category = create_category()
         data = serializers.CategorySerializer(
             category, context={'request': self._get_request(
-                'api:category-detail', kwargs={'pk': category.pk})}).data
+                'helpcenter:helpcenter-api:category-detail',
+                kwargs={'pk': category.pk})}).data
         data['title'] = 'My Awesome Title'
 
-        url = reverse('api:category-detail', kwargs={'pk': category.pk})
+        url = reverse('helpcenter:helpcenter-api:category-detail',
+                      kwargs={'pk': category.pk})
         response = self.client.put(url, data)
 
         self.assertEqual(403, response.status_code)
@@ -415,7 +437,7 @@ class TestCategoryViewSet(AuthMixin, APITestCase):
 
 class TestPermissionsView(AuthMixin, APITestCase):
     """ Test cases for the permissions view """
-    url = reverse('api:permissions')
+    url = reverse('helpcenter:helpcenter-api:permissions')
 
     def setUp(self, *args, **kwargs):
         """ Create a dict containing the default permissions """

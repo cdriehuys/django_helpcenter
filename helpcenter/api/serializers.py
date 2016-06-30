@@ -14,10 +14,10 @@ class ArticleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         extra_kwargs = {
             'category': {
-                'view_name': 'api:category-detail',
+                'view_name': 'helpcenter:helpcenter-api:category-detail',
             },
             'url': {
-                'view_name': 'api:article-detail',
+                'view_name': 'helpcenter:helpcenter-api:article-detail',
             },
         }
         fields = (
@@ -39,10 +39,10 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         extra_kwargs = {
             'parent': {
-                'view_name': 'api:category-detail',
+                'view_name': 'helpcenter:helpcenter-api:category-detail',
             },
             'url': {
-                'view_name': 'api:category-detail',
+                'view_name': 'helpcenter:helpcenter-api:category-detail',
             },
         }
         fields = ('id', 'parent', 'parent_id', 'title', 'url')

@@ -40,7 +40,7 @@ class Article(models.Model):
         if self.category:
             return utils.category_detail(self.category)
 
-        return reverse('index')
+        return reverse('helpcenter:index')
 
 
 class Category(models.Model):
@@ -72,7 +72,7 @@ class Category(models.Model):
         if self.parent:
             return utils.category_detail(self.parent)
 
-        return reverse('index')
+        return reverse('helpcenter:index')
 
     @property
     def num_articles(self):

@@ -15,7 +15,8 @@ class TestArticleDetailFunction(TestCase):
         return the url for the detail view of that Article.
         """
         article = create_article()
-        expected = reverse('article-detail', kwargs={'pk': article.pk})
+        expected = reverse(
+            'helpcenter:article-detail', kwargs={'pk': article.pk})
 
         self.assertEqual(expected, utils.article_detail(article))
 
@@ -26,7 +27,8 @@ class TestArticleDetailFunction(TestCase):
         return the url for the detail view of the article with that pk.
         """
         article = create_article()
-        expected = reverse('article-detail', kwargs={'pk': article.pk})
+        expected = reverse(
+            'helpcenter:article-detail', kwargs={'pk': article.pk})
 
         self.assertEqual(expected, utils.article_detail(pk=article.pk))
 
@@ -50,7 +52,8 @@ class TestCategoryDetailFunction(TestCase):
         return the url for the detail view of that Category.
         """
         category = create_category()
-        expected = reverse('category-detail', kwargs={'pk': category.pk})
+        expected = reverse(
+            'helpcenter:category-detail', kwargs={'pk': category.pk})
 
         self.assertEqual(expected, utils.category_detail(category))
 
@@ -61,7 +64,8 @@ class TestCategoryDetailFunction(TestCase):
         return the url for the detail view of the category with that pk.
         """
         category = create_category()
-        expected = reverse('category-detail', kwargs={'pk': category.pk})
+        expected = reverse(
+            'helpcenter:category-detail', kwargs={'pk': category.pk})
 
         self.assertEqual(expected, utils.category_detail(pk=category.pk))
 
