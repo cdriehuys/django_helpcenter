@@ -2,7 +2,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
 
-from helpcenter import models, utils
+from helpcenter import models
 from helpcenter.testing_utils import create_article, create_category
 
 
@@ -50,6 +50,17 @@ class TestArticleModel(TestCase):
         self.assertIsNone(article.category)
         self.assertTrue(start <= article.time_published <= end)
 
+    def test_get_absolute_url(self):
+        """ Test getting an Article instance's url.
+
+        This method should return the URL of the instance's detail view.
+        """
+        article = create_article()
+
+        url = reverse('helpcenter:article-detail', kwargs={'pk': article.pk})
+
+        self.assertEqual(url, article.get_absolute_url())
+
     def test_get_parent_url(self):
         """ Test getting the url of an Article's parent page.
 
@@ -59,7 +70,7 @@ class TestArticleModel(TestCase):
         category = create_category()
         article = create_article(category=category)
 
-        expected = utils.category_detail(category)
+        expected = category.get_absolute_url()
 
         self.assertEqual(expected, article.get_parent_url())
 
@@ -117,6 +128,17 @@ class TestCategoryModel(TestCase):
         self.assertEqual(1, models.Category.objects.count())
         self.assertEqual('child', models.Category.objects.get().title)
 
+    def test_get_absolute_url(self):
+        """ Test getting a Category instance's absolute url.
+
+        This method should return the url of the instance's detail view.
+        """
+        category = create_category()
+
+        url = reverse('helpcenter:category-detail', kwargs={'pk': category.pk})
+
+        self.assertEqual(url, category.get_absolute_url())
+
     def test_get_parent_url(self):
         """ Test getting the url of a Category's parent container.
 
@@ -126,7 +148,7 @@ class TestCategoryModel(TestCase):
         parent = create_category()
         category = create_category(parent=parent)
 
-        expected = utils.category_detail(parent)
+        expected = parent.get_absolute_url()
 
         self.assertEqual(expected, category.get_parent_url())
 

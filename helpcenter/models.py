@@ -2,8 +2,6 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 
-from helpcenter import utils
-
 
 class Article(models.Model):
     """ Model to represent a help article """
@@ -35,10 +33,14 @@ class Article(models.Model):
         """ Return the Article's title """
         return self.title
 
+    def get_absolute_url(self):
+        """ Get the url of the instance's detail view """
+        return reverse('helpcenter:article-detail', kwargs={'pk': self.pk})
+
     def get_parent_url(self):
         """ Get the url of the instance's parent """
         if self.category:
-            return utils.category_detail(self.category)
+            return self.category.get_absolute_url()
 
         return reverse('helpcenter:index')
 
@@ -67,10 +69,14 @@ class Category(models.Model):
         """ Return the Category's title """
         return self.title
 
+    def get_absolute_url(self):
+        """ Get the url of the instance's detail view """
+        return reverse('helpcenter:category-detail', kwargs={'pk': self.pk})
+
     def get_parent_url(self):
         """ Get the url of the instance's parent container """
         if self.parent:
-            return utils.category_detail(self.parent)
+            return self.parent.get_absolute_url()
 
         return reverse('helpcenter:index')
 
