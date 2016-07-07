@@ -2,7 +2,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
 
-from helpcenter import models, utils
+from helpcenter import models
 from helpcenter.testing_utils import create_article, create_category
 
 
@@ -70,7 +70,7 @@ class TestArticleModel(TestCase):
         category = create_category()
         article = create_article(category=category)
 
-        expected = utils.category_detail(category)
+        expected = category.get_absolute_url()
 
         self.assertEqual(expected, article.get_parent_url())
 
@@ -148,7 +148,7 @@ class TestCategoryModel(TestCase):
         parent = create_category()
         category = create_category(parent=parent)
 
-        expected = utils.category_detail(parent)
+        expected = parent.get_absolute_url()
 
         self.assertEqual(expected, category.get_parent_url())
 

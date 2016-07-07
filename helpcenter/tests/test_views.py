@@ -1,7 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from helpcenter import utils
 from helpcenter.testing_utils import (
     create_article, create_category, instance_to_queryset_string)
 
@@ -15,7 +14,7 @@ class TestArticleDetailView(TestCase):
         If the pk used for the detail view doesn't exist, the page
         should 404.
         """
-        url = utils.article_detail(pk=1)
+        url = reverse('helpcenter:article-detail', kwargs={'pk': 1})
         response = self.client.get(url)
 
         self.assertEqual(404, response.status_code)
@@ -24,7 +23,7 @@ class TestArticleDetailView(TestCase):
         """ Test getting an article's detail view. """
         article = create_article()
 
-        url = utils.article_detail(article)
+        url = article.get_absolute_url()
         response = self.client.get(url)
 
         self.assertEqual(200, response.status_code)
@@ -47,7 +46,7 @@ class TestCategoryDetailView(TestCase):
         child = create_category(parent=category, title='child category')
         create_category(title='No Parent')
 
-        url = utils.category_detail(category)
+        url = category.get_absolute_url()
         response = self.client.get(url)
 
         self.assertEqual(200, response.status_code)
@@ -63,7 +62,7 @@ class TestCategoryDetailView(TestCase):
 
         If no Category with the given pk exists, the page should 404.
         """
-        url = utils.category_detail(pk=1)
+        url = reverse('helpcenter:category-detail', kwargs={'pk': 1})
         response = self.client.get(url)
 
         self.assertEqual(404, response.status_code)
@@ -76,7 +75,7 @@ class TestCategoryDetailView(TestCase):
         """
         category = create_category()
 
-        url = utils.category_detail(category)
+        url = category.get_absolute_url()
         response = self.client.get(url)
 
         self.assertEqual(200, response.status_code)
