@@ -128,6 +128,17 @@ class TestCategoryModel(TestCase):
         self.assertEqual(1, models.Category.objects.count())
         self.assertEqual('child', models.Category.objects.get().title)
 
+    def test_get_absolute_url(self):
+        """ Test getting a Category instance's absolute url.
+
+        This method should return the url of the instance's detail view.
+        """
+        category = create_category()
+
+        url = reverse('helpcenter:category-detail', kwargs={'pk': category.pk})
+
+        self.assertEqual(url, category.get_absolute_url())
+
     def test_get_parent_url(self):
         """ Test getting the url of a Category's parent container.
 

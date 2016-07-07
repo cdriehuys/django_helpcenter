@@ -71,6 +71,10 @@ class Category(models.Model):
         """ Return the Category's title """
         return self.title
 
+    def get_absolute_url(self):
+        """ Get the url of the instance's detail view """
+        return reverse('helpcenter:category-detail', kwargs={'pk': self.pk})
+
     def get_parent_url(self):
         """ Get the url of the instance's parent container """
         if self.parent:
