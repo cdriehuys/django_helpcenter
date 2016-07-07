@@ -50,6 +50,17 @@ class TestArticleModel(TestCase):
         self.assertIsNone(article.category)
         self.assertTrue(start <= article.time_published <= end)
 
+    def test_get_absolute_url(self):
+        """ Test getting an Article instance's url.
+
+        This method should return the URL of the instance's detail view.
+        """
+        article = create_article()
+
+        url = reverse('helpcenter:article-detail', kwargs={'pk': article.pk})
+
+        self.assertEqual(url, article.get_absolute_url())
+
     def test_get_parent_url(self):
         """ Test getting the url of an Article's parent page.
 
