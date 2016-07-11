@@ -8,6 +8,8 @@ app_name = 'helpcenter'
 urlpatterns = [
     url(r'^api/', include('helpcenter.api.urls', app_name='helpcenter-api',
         namespace='api')),
+    url(r'^articles/create/$', views.ArticleCreateView.as_view(),
+        name='article-create'),
     url(r'^articles/(?P<pk>[0-9]+)/$', views.ArticleDetailView.as_view(),
         name='article-detail'),
     url(r'^categories/create/$', views.CategoryCreateView.as_view(),

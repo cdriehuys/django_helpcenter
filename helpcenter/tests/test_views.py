@@ -6,6 +6,61 @@ from helpcenter.testing_utils import (
     create_article, create_category, instance_to_queryset_string)
 
 
+class TestArticleCreateView(TestCase):
+    """ Test cases for the Article creation view """
+    url = reverse('helpcenter:article-create')
+
+    def test_initial(self):
+        """ Test the initial GET request to the view.
+
+        On the first GET request, the view should have a blank, unbound
+        form as context.
+        """
+        response = self.client.get(self.url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertFalse(response.context['form'].is_bound)
+
+    def test_post_blank(self):
+        """ Test submitting blank data as a POST request.
+
+        If an empty POST request is submitted, the form should be bound
+        and shown to the user with errors for the required fields.
+        """
+        response = self.client.post(self.url, {})
+
+        expected_errors = {
+            'body': ['This field is required.'],
+            'title': ['This field is required.'],
+        }
+
+        self.assertEqual(200, response.status_code)
+        self.assertTrue(response.context['form'].is_bound)
+        self.assertEqual(expected_errors, response.context['form'].errors)
+
+    def test_post_valid_data(self):
+        """ Test submitting valid data as a POST request.
+
+        If valid data is submitted as a POST request, a new Article
+        instance should be created with the validated data.
+        """
+        category = create_category()
+        data = {
+            'body': 'Test body text.',
+            'category': category.pk,
+            'title': 'Test Title',
+        }
+
+        response = self.client.post(self.url, data)
+
+        article = models.Article.objects.get(title=data['title'])
+
+        self.assertRedirects(response, article.get_absolute_url())
+        self.assertEqual(1, models.Article.objects.count())
+        self.assertEqual(data['body'], article.body)
+        self.assertEqual(category, article.category)
+
+
 class TestArticleDetailView(TestCase):
     """ Test cases for Article detail view """
 

@@ -5,6 +5,13 @@ from helpcenter import models
 from helpcenter.backends.search import SimpleSearch
 
 
+class ArticleCreateView(generic.edit.CreateView):
+    """ View for creating new Article instances """
+    fields = ('title', 'body', 'category')
+    model = models.Article
+    template_name_suffix = '_create'
+
+
 class ArticleDetailView(generic.DetailView):
     """ View for viewing an article's details """
     model = models.Article
