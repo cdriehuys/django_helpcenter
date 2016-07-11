@@ -10,6 +10,13 @@ class ArticleDetailView(generic.DetailView):
     model = models.Article
 
 
+class CategoryCreateView(generic.edit.CreateView):
+    """ View for creating new Category instances """
+    fields = ('title', 'parent')
+    model = models.Category
+    template_name_suffix = '_create'
+
+
 class CategoryDetailView(generic.DetailView):
     """ View for viewing a Category's details """
     model = models.Category

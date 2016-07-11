@@ -1,6 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
+from helpcenter import models
 from helpcenter.testing_utils import (
     create_article, create_category, instance_to_queryset_string)
 
@@ -28,6 +29,65 @@ class TestArticleDetailView(TestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(article, response.context['article'])
+
+
+class TestCategoryCreateView(TestCase):
+    """ Test cases for the Category creation view """
+    url = reverse('helpcenter:category-create')
+
+    def test_initial(self):
+        """ Test the first GET request to the view.
+
+        The first get request to the view should pass a blank
+        CategoryForm to the template as context.
+        """
+        response = self.client.get(self.url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertFalse(response.context['form'].is_bound)
+
+    def test_post_blank(self):
+        """ Test submitting blank data with a POST request.
+
+        If a blank request is submitted, the form should be shown to the
+        user again with errors. Any data they submitted should be
+        retained.
+        """
+        parent = create_category()
+        data = {
+            'parent': parent.id,
+        }
+
+        response = self.client.post(self.url, data)
+
+        expected_errors = {
+            'title': ['This field is required.'],
+        }
+
+        self.assertEqual(200, response.status_code)
+        self.assertTrue(response.context['form'].is_bound)
+        self.assertFalse(response.context['form'].is_valid())
+        self.assertEqual(expected_errors, response.context['form'].errors)
+
+    def test_post_valid_data(self):
+        """ Test submitting valid data through a POST request.
+
+        If valid data is submitted, a new category should be created and
+        the user should be redirected to the detail view for the new
+        category.
+        """
+        parent = create_category(title='Parent Category')
+        data = {
+            'parent': parent.id,
+            'title': 'Test Category',
+        }
+
+        response = self.client.post(self.url, data)
+
+        category = models.Category.objects.get(title=data['title'])
+
+        self.assertRedirects(response, category.get_absolute_url())
+        self.assertEqual(parent, category.parent)
 
 
 class TestCategoryDetailView(TestCase):
