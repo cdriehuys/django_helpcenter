@@ -1,3 +1,6 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
+
 from helpcenter import models
 
 
@@ -42,3 +45,31 @@ def instance_to_queryset_string(instance):
     str_type = str(type(instance)).strip("<>'").split('.')[-1]
 
     return "<{}: {}>".format(str_type, str(instance))
+
+
+class AuthTestMixin:
+    """ Mixin to make authentication in test cases easier """
+    username = 'testuser'
+    password = 'password'
+
+    def add_permission(self, permission_name):
+        """ Give the test user the given permission """
+        perm = Permission.objects.get(codename=permission_name)
+        self.user.user_permissions.add(perm)
+
+    def login(self):
+        """ Log in the client for the current test """
+        self.client.force_login(self.user)
+
+    def setUp(self, *args, **kwargs):
+        """ Create user for testing """
+        super(AuthTestMixin, self).setUp(*args, **kwargs)
+
+        self.user = get_user_model().objects.create_user(
+            username=self.username, password=self.password)
+
+    def tearDown(self, *args, **kwargs):
+        """ Logout the current client """
+        self.client.logout()
+
+        super(AuthTestMixin, self).tearDown(*args, **kwargs)

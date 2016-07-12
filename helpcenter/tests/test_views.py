@@ -3,10 +3,11 @@ from django.test import TestCase
 
 from helpcenter import models
 from helpcenter.testing_utils import (
-    create_article, create_category, instance_to_queryset_string)
+    AuthTestMixin, create_article, create_category,
+    instance_to_queryset_string)
 
 
-class TestArticleCreateView(TestCase):
+class TestArticleCreateView(AuthTestMixin, TestCase):
     """ Test cases for the Article creation view """
     url = reverse('helpcenter:article-create')
 
@@ -16,10 +17,25 @@ class TestArticleCreateView(TestCase):
         On the first GET request, the view should have a blank, unbound
         form as context.
         """
+        self.add_permission('add_article')
+        self.login()
+
         response = self.client.get(self.url)
 
         self.assertEqual(200, response.status_code)
         self.assertFalse(response.context['form'].is_bound)
+
+    def test_no_permission(self):
+        """ Test the view with no permission to create articles.
+
+        If the current user doesn't have permission to create articles,
+        they shouldn't be allowed to access the view.
+        """
+        self.login()
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(403, response.status_code)
 
     def test_post_blank(self):
         """ Test submitting blank data as a POST request.
@@ -27,6 +43,9 @@ class TestArticleCreateView(TestCase):
         If an empty POST request is submitted, the form should be bound
         and shown to the user with errors for the required fields.
         """
+        self.add_permission('add_article')
+        self.login()
+
         response = self.client.post(self.url, {})
 
         expected_errors = {
@@ -44,6 +63,9 @@ class TestArticleCreateView(TestCase):
         If valid data is submitted as a POST request, a new Article
         instance should be created with the validated data.
         """
+        self.add_permission('add_article')
+        self.login()
+
         category = create_category()
         data = {
             'body': 'Test body text.',
@@ -86,7 +108,7 @@ class TestArticleDetailView(TestCase):
         self.assertEqual(article, response.context['article'])
 
 
-class TestCategoryCreateView(TestCase):
+class TestCategoryCreateView(AuthTestMixin, TestCase):
     """ Test cases for the Category creation view """
     url = reverse('helpcenter:category-create')
 
@@ -96,10 +118,25 @@ class TestCategoryCreateView(TestCase):
         The first get request to the view should pass a blank
         CategoryForm to the template as context.
         """
+        self.add_permission('add_category')
+        self.login()
+
         response = self.client.get(self.url)
 
         self.assertEqual(200, response.status_code)
         self.assertFalse(response.context['form'].is_bound)
+
+    def test_no_permission(self):
+        """ Test the view with no permission to create categories.
+
+        If the user making the request has no permission to add
+        categories, the view should 403.
+        """
+        self.login()
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(403, response.status_code)
 
     def test_post_blank(self):
         """ Test submitting blank data with a POST request.
@@ -108,6 +145,9 @@ class TestCategoryCreateView(TestCase):
         user again with errors. Any data they submitted should be
         retained.
         """
+        self.add_permission('add_category')
+        self.login()
+
         parent = create_category()
         data = {
             'parent': parent.id,
@@ -131,6 +171,9 @@ class TestCategoryCreateView(TestCase):
         the user should be redirected to the detail view for the new
         category.
         """
+        self.add_permission('add_category')
+        self.login()
+
         parent = create_category(title='Parent Category')
         data = {
             'parent': parent.id,

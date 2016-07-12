@@ -3,12 +3,14 @@ from django.views import generic
 
 from helpcenter import models
 from helpcenter.backends.search import SimpleSearch
+from helpcenter.mixins import PermissionsMixin
 
 
-class ArticleCreateView(generic.edit.CreateView):
+class ArticleCreateView(PermissionsMixin, generic.edit.CreateView):
     """ View for creating new Article instances """
     fields = ('title', 'body', 'category')
     model = models.Article
+    permissions = ('helpcenter.add_article',)
     template_name_suffix = '_create'
 
 
@@ -17,10 +19,11 @@ class ArticleDetailView(generic.DetailView):
     model = models.Article
 
 
-class CategoryCreateView(generic.edit.CreateView):
+class CategoryCreateView(PermissionsMixin, generic.edit.CreateView):
     """ View for creating new Category instances """
     fields = ('title', 'parent')
     model = models.Category
+    permissions = ('helpcenter.add_category',)
     template_name_suffix = '_create'
 
 
