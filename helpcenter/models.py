@@ -80,6 +80,10 @@ class Category(models.Model):
 
         return reverse('helpcenter:index')
 
+    def get_update_url(self):
+        """ Get the url of the instance's update view """
+        return reverse('helpcenter:category-update', kwargs={'pk': self.pk})
+
     @property
     def num_articles(self):
         articles = Article.objects.filter(category=self).count()

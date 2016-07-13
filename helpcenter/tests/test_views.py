@@ -240,6 +240,73 @@ class TestCategoryDetailView(TestCase):
         self.assertEqual(category, response.context['category'])
 
 
+class TestCategoryUpdateView(AuthTestMixin, TestCase):
+    """ Test cases for the category update view """
+
+    def test_initial_get(self):
+        """ Test the initial GET request to the view.
+
+        The initial GET request to the view should have a form that is
+        pre-populated with the category's data.
+        """
+        self.add_permission('change_category')
+        self.login()
+
+        category = create_category(
+            title='Cool Category', parent=create_category())
+
+        url = category.get_update_url()
+        response = self.client.get(url)
+
+        form = response.context['form']
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(category.title, form.initial['title'])
+        self.assertEqual(category.parent.pk, form.initial['parent'])
+
+    def test_no_permission(self):
+        """ Test the view with no permission to change categories.
+
+        If a user who doesn't have permission to change categories tries
+        to access the view, they should be denied access.
+        """
+        self.login()
+
+        category = create_category()
+
+        url = category.get_update_url()
+        response = self.client.get(url)
+
+        self.assertEqual(403, response.status_code)
+
+    def test_valid_data(self):
+        """ Test sending valid data through a POST request.
+
+        If valid data is submitted to the form, the category's data
+        should be updated.
+        """
+        self.add_permission('change_category')
+        self.login()
+
+        parent = create_category()
+        category = create_category(title='Category', parent=parent)
+        new_parent = create_category(title='New Parent')
+        data = {
+            'title': 'New Title',
+            'parent': new_parent.pk,
+        }
+
+        url = category.get_update_url()
+        response = self.client.post(url, data)
+
+        category.refresh_from_db()
+
+        self.assertRedirects(response, category.get_absolute_url())
+        self.assertEqual(3, models.Category.objects.count())
+        self.assertEqual(data['title'], category.title)
+        self.assertEqual(new_parent, category.parent)
+
+
 class TestIndexView(TestCase):
     """ Test cases for the index view """
     url = reverse('helpcenter:index')

@@ -6,6 +6,10 @@
 
   <h1>{{ category.title }}</h1>
 
+  {% if perms.change_category %}
+    <a href='{{ category.get_update_url }}'>Edit Category</a>
+  {% endif %}
+
   {% if categories %}
 
     <h2>Sub Categories</h2>

@@ -16,6 +16,8 @@ urlpatterns = [
         name='category-create'),
     url(r'^categories/(?P<pk>[0-9]+)/$', views.CategoryDetailView.as_view(),
         name='category-detail'),
+    url(r'^categories/(?P<pk>[0-9]+)/update/$',
+        views.CategoryUpdateView.as_view(), name='category-update'),
     url(r'^search/$', views.SearchView.as_view(), name='search'),
     url(r'^$', views.IndexView.as_view(), name='index'),
 ]

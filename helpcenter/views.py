@@ -45,6 +45,14 @@ class CategoryDetailView(generic.DetailView):
         return context
 
 
+class CategoryUpdateView(PermissionsMixin, generic.edit.UpdateView):
+    """ View for updating existing Category instances """
+    fields = ('title', 'parent')
+    model = models.Category
+    permissions = ('helpcenter.change_category',)
+    template_name_suffix = '_update'
+
+
 class IndexView(generic.View):
     """ View for the helpcenter index (home page) """
     template_name = 'helpcenter/index.html'

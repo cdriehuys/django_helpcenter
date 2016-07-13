@@ -164,6 +164,18 @@ class TestCategoryModel(TestCase):
 
         self.assertEqual(expected, category.get_parent_url())
 
+    def test_get_update_url(self):
+        """ Test getting the url of a Category instance's update view.
+
+        The method should return the url of the instance's update view.
+        """
+        category = create_category()
+
+        expected = reverse(
+            'helpcenter:category-update', kwargs={'pk': category.pk})
+
+        self.assertEqual(expected, category.get_update_url())
+
     def test_num_articles(self):
         """ Test num_articles property with articles in category.
 
