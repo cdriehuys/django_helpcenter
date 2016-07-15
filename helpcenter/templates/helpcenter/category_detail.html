@@ -1,16 +1,30 @@
 {% extends 'helpcenter/base.html' %}
 
+
 {% block page_title %}{{ category.title }}{% endblock %}
+
 
 {% block content %}
 
   <h1>{{ category.title }}</h1>
 
-  {% if categories %}
+  {% if perms.change_category %}
+    <a href='{{ category.get_update_url }}'>Edit Category</a>
+  {% endif %}
+
+  {% if perms.delete_category %}
+    <a href='{{ category.get_delete_url }}'>Delete Category</a>
+  {% endif %}
+
+  {% if categories or perms.add_category %}
 
     <h2>Sub Categories</h2>
 
     {% include 'helpcenter/snippets/category_listing.html' %}
+
+    {% if perms.add_category %}
+      <a href='{% url "helpcenter:category-create" %}'>Create Category</a>
+    {% endif %}
 
   {% endif %}
 
@@ -19,6 +33,10 @@
     <h2>Articles</h2>
 
     {% include 'helpcenter/snippets/article_listing.html' %}
+
+    {% if perms.add_article %}
+      <a href='{% url "helpcenter:article-create" %}'>Create Article</a>
+    {% endif %}
 
   {% endif %}
 

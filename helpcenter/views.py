@@ -3,11 +3,56 @@ from django.views import generic
 
 from helpcenter import models
 from helpcenter.backends.search import SimpleSearch
+from helpcenter.mixins import PermissionsMixin
+
+
+class ArticleCreateView(PermissionsMixin, generic.edit.CreateView):
+    """ View for creating new Article instances """
+    fields = ('title', 'body', 'category')
+    model = models.Article
+    permissions = ('helpcenter.add_article',)
+    template_name_suffix = '_create'
+
+
+class ArticleDeleteView(PermissionsMixin, generic.edit.DeleteView):
+    """ View for deleting an Article instance """
+    model = models.Article
+    permissions = ('helpcenter.delete_article',)
+
+    def get_success_url(self):
+        """ Redirect to the instance's parent """
+        return self.object.get_parent_url()
 
 
 class ArticleDetailView(generic.DetailView):
     """ View for viewing an article's details """
     model = models.Article
+
+
+class ArticleUpdateView(PermissionsMixin, generic.edit.UpdateView):
+    """ View for updating Article instances """
+    fields = ('title', 'body', 'category')
+    model = models.Article
+    permissions = ('helpcenter.change_article',)
+    template_name_suffix = '_update'
+
+
+class CategoryCreateView(PermissionsMixin, generic.edit.CreateView):
+    """ View for creating new Category instances """
+    fields = ('title', 'parent')
+    model = models.Category
+    permissions = ('helpcenter.add_category',)
+    template_name_suffix = '_create'
+
+
+class CategoryDeleteView(PermissionsMixin, generic.edit.DeleteView):
+    """ View for deleting Category instances """
+    model = models.Category
+    permissions = ('helpcenter.delete_category',)
+
+    def get_success_url(self):
+        """ Return the url of the instances parent """
+        return self.object.get_parent_url()
 
 
 class CategoryDetailView(generic.DetailView):
@@ -26,6 +71,14 @@ class CategoryDetailView(generic.DetailView):
         context['categories'] = child_categories
 
         return context
+
+
+class CategoryUpdateView(PermissionsMixin, generic.edit.UpdateView):
+    """ View for updating existing Category instances """
+    fields = ('title', 'parent')
+    model = models.Category
+    permissions = ('helpcenter.change_category',)
+    template_name_suffix = '_update'
 
 
 class IndexView(generic.View):

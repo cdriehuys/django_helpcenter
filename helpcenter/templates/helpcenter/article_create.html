@@ -1,0 +1,21 @@
+{% extends 'helpcenter/base.html' %}
+
+
+{% block page_title %}Create Article{% endblock %}
+
+
+{% block content %}
+
+  <h1>Create Article</h1>
+
+  <form method='post'>
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type='submit'>Create Article</button>
+
+  </form>
+
+{% endblock %}
