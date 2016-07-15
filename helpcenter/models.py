@@ -81,6 +81,10 @@ class Category(models.Model):
         """ Get the url of the instance's detail view """
         return reverse('helpcenter:category-detail', kwargs={'pk': self.pk})
 
+    def get_delete_url(self):
+        """ Get the url of the instance's delete view """
+        return reverse('helpcenter:category-delete', kwargs={'pk': self.pk})
+
     def get_parent_url(self):
         """ Get the url of the instance's parent container """
         if self.parent:

@@ -45,6 +45,16 @@ class CategoryCreateView(PermissionsMixin, generic.edit.CreateView):
     template_name_suffix = '_create'
 
 
+class CategoryDeleteView(PermissionsMixin, generic.edit.DeleteView):
+    """ View for deleting Category instances """
+    model = models.Category
+    permissions = ('helpcenter.delete_category',)
+
+    def get_success_url(self):
+        """ Return the url of the instances parent """
+        return self.object.get_parent_url()
+
+
 class CategoryDetailView(generic.DetailView):
     """ View for viewing a Category's details """
     model = models.Category

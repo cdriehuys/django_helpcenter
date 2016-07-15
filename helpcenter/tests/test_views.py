@@ -316,6 +316,59 @@ class TestCategoryCreateView(AuthTestMixin, TestCase):
         self.assertEqual(parent, category.parent)
 
 
+class TestCategoryDeleteView(AuthTestMixin, TestCase):
+    """ Test cases for the Category delete view """
+
+    def test_get(self):
+        """ Test a GET request to the Category delete view.
+
+        A GET request to this view should show a page that has the
+        instance to be deleted as context.
+        """
+        self.add_permission('delete_category')
+        self.login()
+
+        category = create_category()
+
+        url = category.get_delete_url()
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(category, response.context['object'])
+
+    def test_no_permission(self):
+        """ Test requesting the view with no delete permission.
+
+        If the view is requested by a user who does not have permission
+        to delete a Category instance, the view should return a 403
+        response code.
+        """
+        category = create_category()
+
+        url = category.get_delete_url()
+        response = self.client.get(url)
+
+        self.assertEqual(403, response.status_code)
+
+    def test_post(self):
+        """ Test a POST request to the Category delete view.
+
+        A POST request to the view should delete the instance and
+        redirect to the instances parent object.
+        """
+        self.add_permission('delete_category')
+        self.login()
+
+        category = create_category()
+        redirect_url = category.get_parent_url()
+
+        url = category.get_delete_url()
+        response = self.client.post(url)
+
+        self.assertRedirects(response, redirect_url)
+        self.assertEqual(0, models.Category.objects.count())
+
+
 class TestCategoryDetailView(TestCase):
     """ Test cases for the Category detail view """
 

@@ -163,6 +163,18 @@ class TestCategoryModel(TestCase):
 
         self.assertEqual(url, category.get_absolute_url())
 
+    def test_get_delete_url(self):
+        """ Test getting a Category instance's delete url.
+
+        This method should return the url of the instance's delete view.
+        """
+        category = create_category()
+
+        expected = reverse(
+            'helpcenter:category-delete', kwargs={'pk': category.pk})
+
+        self.assertEqual(expected, category.get_delete_url())
+
     def test_get_parent_url(self):
         """ Test getting the url of a Category's parent container.
 
