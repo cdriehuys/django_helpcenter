@@ -37,6 +37,10 @@ class Article(models.Model):
         """ Get the url of the instance's detail view """
         return reverse('helpcenter:article-detail', kwargs={'pk': self.pk})
 
+    def get_delete_url(self):
+        """ Get the url of the instance's delete view """
+        return reverse('helpcenter:article-delete', kwargs={'pk': self.pk})
+
     def get_parent_url(self):
         """ Get the url of the instance's parent """
         if self.category:

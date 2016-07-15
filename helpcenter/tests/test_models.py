@@ -61,6 +61,18 @@ class TestArticleModel(TestCase):
 
         self.assertEqual(url, article.get_absolute_url())
 
+    def test_get_delete_url(self):
+        """ Test getting the url of an Article instance's delete page.
+
+        This method should return the url of the instance's delete view.
+        """
+        article = create_article()
+
+        expected = reverse(
+            'helpcenter:article-delete', kwargs={'pk': article.pk})
+
+        self.assertEqual(expected, article.get_delete_url())
+
     def test_get_parent_url(self):
         """ Test getting the url of an Article's parent page.
 

@@ -14,6 +14,16 @@ class ArticleCreateView(PermissionsMixin, generic.edit.CreateView):
     template_name_suffix = '_create'
 
 
+class ArticleDeleteView(PermissionsMixin, generic.edit.DeleteView):
+    """ View for deleting an Article instance """
+    model = models.Article
+    permissions = ('helpcenter.delete_article',)
+
+    def get_success_url(self):
+        """ Redirect to the instance's parent """
+        return self.object.get_parent_url()
+
+
 class ArticleDetailView(generic.DetailView):
     """ View for viewing an article's details """
     model = models.Article

@@ -1,0 +1,21 @@
+{% extends 'helpcenter/base.html' %}
+
+
+{% block page_title %}Delete Article{% endblock %}
+
+
+{% block content %}
+
+  <h1>Are You Sure?</h1>
+
+  <p>Are you sure you want to delete the article "{{ object }}"?</p>
+
+  <form method='post'>
+
+    {% csrf_token %}
+
+    <button type='submit'>Delete Article</button>
+
+  </form>
+
+{% endblock %}

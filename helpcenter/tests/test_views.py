@@ -83,6 +83,58 @@ class TestArticleCreateView(AuthTestMixin, TestCase):
         self.assertEqual(category, article.category)
 
 
+class TestArticleDeleteView(AuthTestMixin, TestCase):
+    """ Test cases for Article delete view """
+
+    def test_get(self):
+        """ Test a GET request to the Article delete view.
+
+        A GET request should display a page that has the instance to be
+        deleted as context.
+        """
+        self.add_permission('delete_article')
+        self.login()
+
+        article = create_article()
+
+        url = article.get_delete_url()
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(article, response.context['object'])
+
+    def test_no_permission(self):
+        """ Test delete view as a user with no delete permission.
+
+        If the user requesting the view has no permission to delete
+        articles, the view should return a 403 response.
+        """
+        article = create_article()
+
+        url = article.get_delete_url()
+        response = self.client.get(url)
+
+        self.assertEqual(403, response.status_code)
+
+    def test_post(self):
+        """ Test a POST request to the Article delete view.
+
+        A POST request to the view should delete the instance and
+        redirect to the instance's parent's detail url.
+        """
+        self.add_permission('delete_article')
+        self.login()
+
+        article = create_article()
+        redirect_url = article.get_parent_url()
+
+        url = article.get_delete_url()
+        response = self.client.post(url)
+
+        self.assertRedirects(response, redirect_url)
+        self.assertEqual(0, models.Article.objects.count())
+
+
 class TestArticleDetailView(TestCase):
     """ Test cases for Article detail view """
 
