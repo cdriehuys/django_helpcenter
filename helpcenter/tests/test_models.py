@@ -86,6 +86,18 @@ class TestArticleModel(TestCase):
 
         self.assertEqual(expected, article.get_parent_url())
 
+    def test_get_update_url(self):
+        """ Test getting an Article instance's update url.
+
+        This method should return the url of the instance's update view.
+        """
+        article = create_article()
+
+        expected = reverse(
+            'helpcenter:article-update', kwargs={'pk': article.pk})
+
+        self.assertEqual(expected, article.get_update_url())
+
     def test_string_conversion(self):
         """ Test converting an Article to a string.
 

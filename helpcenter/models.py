@@ -44,6 +44,10 @@ class Article(models.Model):
 
         return reverse('helpcenter:index')
 
+    def get_update_url(self):
+        """ Get the url of the instance's update view """
+        return reverse('helpcenter:article-update', kwargs={'pk': self.pk})
+
 
 class Category(models.Model):
     """ Model to represent a category to contain articles """

@@ -19,6 +19,14 @@ class ArticleDetailView(generic.DetailView):
     model = models.Article
 
 
+class ArticleUpdateView(PermissionsMixin, generic.edit.UpdateView):
+    """ View for updating Article instances """
+    fields = ('title', 'body', 'category')
+    model = models.Article
+    permissions = ('helpcenter.change_article',)
+    template_name_suffix = '_update'
+
+
 class CategoryCreateView(PermissionsMixin, generic.edit.CreateView):
     """ View for creating new Category instances """
     fields = ('title', 'parent')

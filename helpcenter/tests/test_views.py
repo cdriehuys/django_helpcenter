@@ -108,6 +108,82 @@ class TestArticleDetailView(TestCase):
         self.assertEqual(article, response.context['article'])
 
 
+class TestArticleUpdateView(AuthTestMixin, TestCase):
+    """ Test cases for the Article update view """
+
+    def test_initial(self):
+        """ Test the initial GET request to the view.
+
+        The initial GET request to the view should have a form that is
+        unbound, but its initial data should be that of the Article
+        instance being updated.
+        """
+        self.add_permission('change_article')
+        self.login()
+
+        category = create_category()
+        data = {
+            'title': 'Test Title',
+            'body': 'Test body text.',
+            'category': category,
+        }
+        article = create_article(**data)
+
+        url = article.get_update_url()
+        response = self.client.get(url)
+
+        form = response.context['form']
+
+        self.assertEqual(200, response.status_code)
+        self.assertFalse(form.is_bound)
+        self.assertEqual(data['title'], form.initial['title'])
+        self.assertEqual(data['body'], form.initial['body'])
+        self.assertEqual(data['category'].pk, form.initial['category'])
+
+    def test_no_permission(self):
+        """ Test accessing the view with no permission.
+
+        If a user who doesn't have permission to change articles tries
+        to access the view, they should not be able to.
+        """
+        self.login()
+
+        article = create_article()
+
+        url = article.get_update_url()
+        response = self.client.get(url)
+
+        self.assertEqual(403, response.status_code)
+
+    def test_valid_data(self):
+        """ Test submitting valid data with a POST request.
+
+        If valid data is submitted in a POST request, the Article
+        instance should be updated with the new data.
+        """
+        self.add_permission('change_article')
+        self.login()
+
+        category = create_category()
+        article = create_article()
+        data = {
+            'title': 'My Awesome Title',
+            'body': 'New Awesome Body Text',
+            'category': category.id,
+        }
+
+        url = article.get_update_url()
+        response = self.client.post(url, data)
+
+        article.refresh_from_db()
+
+        self.assertRedirects(response, article.get_absolute_url())
+        self.assertEqual(1, models.Article.objects.count())
+        self.assertEqual(data['title'], article.title)
+        self.assertEqual(data['body'], article.body)
+        self.assertEqual(category, article.category)
+
+
 class TestCategoryCreateView(AuthTestMixin, TestCase):
     """ Test cases for the Category creation view """
     url = reverse('helpcenter:category-create')
