@@ -6,6 +6,14 @@
 
   <h1>{{ article.title }}</h1>
 
+  {% if perms.change_article %}
+    <a href='{{ article.get_update_url }}'>Edit Article</a>
+  {% endif %}
+
+  {% if perms.delete_article %}
+    <a href='{{ article.get_delete_url }}'>Delete Article</a>
+  {% endif %}
+
   <div class='article-content'>
     {{ article.body|safe }}
   </div>
