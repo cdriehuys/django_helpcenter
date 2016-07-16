@@ -1,7 +1,7 @@
 from django.core.exceptions import PermissionDenied
 
 
-class PermissionsMixin:
+class PermissionsMixin(object):
     """ Mixin that requires the user to have certain permissions """
 
     def has_permission(self, request):

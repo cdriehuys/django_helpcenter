@@ -47,7 +47,7 @@ def instance_to_queryset_string(instance):
     return "<{}: {}>".format(str_type, str(instance))
 
 
-class AuthTestMixin:
+class AuthTestMixin(object):
     """ Mixin to make authentication in test cases easier """
     username = 'testuser'
     password = 'password'
