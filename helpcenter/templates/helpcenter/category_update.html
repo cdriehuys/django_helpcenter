@@ -1,0 +1,21 @@
+{% extends 'helpcenter/base.html' %}
+
+
+{% block page_title %}Update Category{% endblock %}
+
+
+{% block content %}
+
+  <h1>Update Category</h1>
+
+  <form method='post'>
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type='submit'>Update Category</button>
+
+  </form>
+
+{% endblock %}

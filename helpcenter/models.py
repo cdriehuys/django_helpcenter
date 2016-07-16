@@ -2,8 +2,6 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 
-from helpcenter import utils
-
 
 class Article(models.Model):
     """ Model to represent a help article """
@@ -18,6 +16,10 @@ class Article(models.Model):
         blank=True,
         help_text="The parent category for the article.",
         verbose_name="Article Category")
+
+    time_edited = models.DateTimeField(
+        auto_now=True,
+        verbose_name="time last modifed")
 
     time_published = models.DateTimeField(
         default=timezone.now,
@@ -35,12 +37,24 @@ class Article(models.Model):
         """ Return the Article's title """
         return self.title
 
+    def get_absolute_url(self):
+        """ Get the url of the instance's detail view """
+        return reverse('helpcenter:article-detail', kwargs={'pk': self.pk})
+
+    def get_delete_url(self):
+        """ Get the url of the instance's delete view """
+        return reverse('helpcenter:article-delete', kwargs={'pk': self.pk})
+
     def get_parent_url(self):
         """ Get the url of the instance's parent """
         if self.category:
-            return utils.category_detail(self.category)
+            return self.category.get_absolute_url()
 
         return reverse('helpcenter:index')
+
+    def get_update_url(self):
+        """ Get the url of the instance's update view """
+        return reverse('helpcenter:article-update', kwargs={'pk': self.pk})
 
 
 class Category(models.Model):
@@ -67,12 +81,24 @@ class Category(models.Model):
         """ Return the Category's title """
         return self.title
 
+    def get_absolute_url(self):
+        """ Get the url of the instance's detail view """
+        return reverse('helpcenter:category-detail', kwargs={'pk': self.pk})
+
+    def get_delete_url(self):
+        """ Get the url of the instance's delete view """
+        return reverse('helpcenter:category-delete', kwargs={'pk': self.pk})
+
     def get_parent_url(self):
         """ Get the url of the instance's parent container """
         if self.parent:
-            return utils.category_detail(self.parent)
+            return self.parent.get_absolute_url()
 
         return reverse('helpcenter:index')
+
+    def get_update_url(self):
+        """ Get the url of the instance's update view """
+        return reverse('helpcenter:category-update', kwargs={'pk': self.pk})
 
     @property
     def num_articles(self):
