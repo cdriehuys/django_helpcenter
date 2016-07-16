@@ -31,6 +31,7 @@ class TestArticleModel(TestCase):
         self.assertEqual(title, article.title)
         self.assertEqual(body, article.body)
         self.assertEqual(time, article.time_published)
+        self.assertIsNotNone(article.time_edited)
 
     def test_defaults(self):
         """ Test the default values when creating an article.
@@ -49,6 +50,7 @@ class TestArticleModel(TestCase):
 
         self.assertIsNone(article.category)
         self.assertTrue(start <= article.time_published <= end)
+        self.assertTrue(start <= article.time_edited <= end)
 
     def test_get_absolute_url(self):
         """ Test getting an Article instance's url.
