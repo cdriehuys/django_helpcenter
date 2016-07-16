@@ -17,6 +17,10 @@ class Article(models.Model):
         help_text="The parent category for the article.",
         verbose_name="Article Category")
 
+    time_edited = models.DateTimeField(
+        auto_now=True,
+        verbose_name="time last modifed")
+
     time_published = models.DateTimeField(
         default=timezone.now,
         help_text=("Please use the following format: ",
