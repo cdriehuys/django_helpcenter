@@ -18,6 +18,11 @@ class Article(models.Model):
         help_text="The parent category for the article.",
         verbose_name="Article Category")
 
+    draft = models.BooleanField(
+        default=False,
+        help_text="Marking an article as a draft will hide it from users.",
+        verbose_name="article is a draft")
+
     time_edited = models.DateTimeField(
         auto_now=True,
         verbose_name="time last modifed")
