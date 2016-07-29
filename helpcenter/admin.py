@@ -12,9 +12,10 @@ class ArticleAdmin(admin.ModelAdmin):
         }),
         ('Publishing Options', {
             'classes': ('collapse',),
-            'fields': ('time_published',)
+            'fields': ('draft', 'time_published')
         }))
-    list_display = ('title', 'category', 'time_published')
+    list_display = (
+        'title', 'category', 'time_published', 'time_edited', 'draft')
     search_fields = ('title',)
 
 

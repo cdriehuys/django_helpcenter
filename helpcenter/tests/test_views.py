@@ -485,7 +485,7 @@ class TestCategoryDeleteView(AuthTestMixin, TestCase):
         self.assertEqual(0, models.Category.objects.count())
 
 
-class TestCategoryDetailView(TestCase):
+class TestCategoryDetailView(AuthTestMixin, TestCase):
     """ Test cases for the Category detail view """
 
     @override_settings(HELPCENTER_EXPANDED_ARTICLE_LIST=False)
@@ -531,6 +531,52 @@ class TestCategoryDetailView(TestCase):
         self.assertQuerysetEqual(
             response.context['articles'],
             map(instance_to_queryset_string, category.article_list))
+
+    def test_draft_as_editor(self):
+        """Test the article list as a user with editing permissions.
+
+        If the requesting user has permission to edit articles, then the
+        drafts should be included.
+        """
+        self.add_permission('change_article')
+        self.login()
+
+        category = create_category()
+        create_article(
+            category=category, title='Normal Article')
+        create_article(
+            category=category, title='Draft Article', draft=True)
+
+        url = category.get_absolute_url()
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertQuerysetEqual(
+            response.context['articles'],
+            map(instance_to_queryset_string, category.article_list),
+            ordered=False)
+
+    def test_draft_as_normal_user(self):
+        """Test the article list as a normal user when there are drafts.
+
+        If an article is a draft, it should not be included when a
+        normal user requests the view.
+        """
+        category = create_category()
+        create_article(
+            category=category, title='Normal Article')
+        create_article(
+            category=category, title='Draft Article', draft=True)
+
+        url = category.get_absolute_url()
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertQuerysetEqual(
+            response.context['articles'],
+            map(
+                instance_to_queryset_string,
+                category.article_list.exclude(draft=True)))
 
     def test_invalid_pk(self):
         """ Test getting the detail view with an invalid pk.
