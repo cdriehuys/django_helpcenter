@@ -62,6 +62,28 @@ class Article(models.Model):
         """ Get the url of the instance's update view """
         return reverse('helpcenter:article-update', kwargs={'pk': self.pk})
 
+    def save(self, *args, **kwargs):
+        """Save the article instance to the database.
+
+        This overrides Django's default save method in order to update
+        the instance's `time_published` attribute if the instance is
+        being converted from a draft to a normal article.
+
+        Args:
+            *args: Passed to the default implementation.
+            **kwargs: Passed to the default implementation.
+
+        Returns:
+            Article: The new saved instance.
+        """
+        if self.pk and not self.draft:
+            old_obj = Article.objects.get(pk=self.pk)
+
+            if old_obj.draft:
+                self.time_published = timezone.now()
+
+        return super(Article, self).save(*args, **kwargs)
+
 
 class Category(models.Model):
     """ Model to represent a category to contain articles """
