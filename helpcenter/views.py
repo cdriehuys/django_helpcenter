@@ -71,6 +71,10 @@ class CategoryDetailView(generic.DetailView):
             *args, **kwargs)
 
         articles = self.object.article_list
+
+        if not self.request.user.has_perm('helpcenter.change_article'):
+            articles = articles.exclude(draft=True)
+
         context['articles'] = articles
 
         child_categories = models.Category.objects.filter(parent=self.object)
