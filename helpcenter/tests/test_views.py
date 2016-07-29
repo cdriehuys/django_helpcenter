@@ -488,6 +488,7 @@ class TestCategoryDeleteView(AuthTestMixin, TestCase):
 class TestCategoryDetailView(TestCase):
     """ Test cases for the Category detail view """
 
+    @override_settings(HELPCENTER_EXPANDED_ARTICLE_LIST=False)
     def test_context_data(self):
         """ Test adding additional context data.
 
@@ -496,9 +497,9 @@ class TestCategoryDetailView(TestCase):
         of the current category.
         """
         category = create_category()
-        article = create_article(category=category)
+        create_article(category=category)
         create_article(title='No Category')
-        child = create_category(parent=category, title='child category')
+        create_category(parent=category, title='child category')
         create_category(title='No Parent')
 
         url = category.get_absolute_url()
@@ -507,10 +508,29 @@ class TestCategoryDetailView(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertQuerysetEqual(
             response.context['categories'],
-            [instance_to_queryset_string(child)])
+            map(instance_to_queryset_string, category.category_set.all()))
         self.assertQuerysetEqual(
             response.context['articles'],
-            [instance_to_queryset_string(article)])
+            map(instance_to_queryset_string, category.article_list))
+
+    @override_settings(HELPCENTER_EXPANDED_ARTICLE_LIST=True)
+    def test_context_data_expanded_article_list(self):
+        """Test context data with the expanded article list settings.
+
+        If `HELPCENTER_EXPANDED_ARTICLE_LIST` is true, then articles
+        from child categories should be included as well.
+        """
+        category = create_category()
+        child_category = create_category(parent=category)
+        create_article(category=child_category)
+
+        url = category.get_absolute_url()
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertQuerysetEqual(
+            response.context['articles'],
+            map(instance_to_queryset_string, category.article_list))
 
     def test_invalid_pk(self):
         """ Test getting the detail view with an invalid pk.

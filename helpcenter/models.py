@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
@@ -80,6 +81,24 @@ class Category(models.Model):
     def __str__(self):
         """ Return the Category's title """
         return self.title
+
+    @property
+    def article_list(self):
+        """List of articles in this category.
+
+        If the setting `HELPCENTER_EXPANDED_ARTICLE_LIST` is true, this
+        list will include all the articles in this instance's child
+        categories as well.
+        """
+        if getattr(settings, 'HELPCENTER_EXPANDED_ARTICLE_LIST', False):
+            articles = self.article_set.all()
+
+            for category in self.category_set.all():
+                articles |= category.article_list
+
+            return articles
+
+        return self.article_set.all()
 
     def get_absolute_url(self):
         """ Get the url of the instance's detail view """
