@@ -30,6 +30,7 @@ class TestArticleCreateView(AuthTestMixin, TestCase):
         self.assertTrue('title' in form.fields)
         self.assertTrue('body' in form.fields)
         self.assertTrue('category' in form.fields)
+        self.assertTrue('draft' in form.fields)
 
     def test_initial(self):
         """ Test the initial GET request to the view.
@@ -222,6 +223,7 @@ class TestArticleUpdateView(AuthTestMixin, TestCase):
         self.assertTrue('title' in form.fields)
         self.assertTrue('body' in form.fields)
         self.assertTrue('category' in form.fields)
+        self.assertTrue('draft' in form.fields)
 
     def test_initial(self):
         """ Test the initial GET request to the view.
