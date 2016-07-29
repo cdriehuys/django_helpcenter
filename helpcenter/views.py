@@ -70,7 +70,7 @@ class CategoryDetailView(generic.DetailView):
         context = super(CategoryDetailView, self).get_context_data(
             *args, **kwargs)
 
-        articles = models.Article.objects.filter(category=self.object)
+        articles = self.object.article_list
         context['articles'] = articles
 
         child_categories = models.Category.objects.filter(parent=self.object)
