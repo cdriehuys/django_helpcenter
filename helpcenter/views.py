@@ -3,12 +3,14 @@ from django.views import generic
 
 from helpcenter import models
 from helpcenter.backends.search import SimpleSearch
-from helpcenter.mixins import PermissionsMixin
+from helpcenter.mixins import OptionalFormMixin, PermissionsMixin
 
 
-class ArticleCreateView(PermissionsMixin, generic.edit.CreateView):
-    """ View for creating new Article instances """
+class ArticleCreateView(OptionalFormMixin, PermissionsMixin,
+                        generic.edit.CreateView):
+    """View for creating new Article instances."""
     fields = ('title', 'body', 'category')
+    form_class_setting = 'HELPCENTER_ARTICLE_CREATE_FORM'
     model = models.Article
     permissions = ('helpcenter.add_article',)
     template_name_suffix = '_create'
@@ -29,17 +31,21 @@ class ArticleDetailView(generic.DetailView):
     model = models.Article
 
 
-class ArticleUpdateView(PermissionsMixin, generic.edit.UpdateView):
+class ArticleUpdateView(OptionalFormMixin, PermissionsMixin,
+                        generic.edit.UpdateView):
     """ View for updating Article instances """
     fields = ('title', 'body', 'category')
+    form_class_setting = 'HELPCENTER_ARTICLE_UPDATE_FORM'
     model = models.Article
     permissions = ('helpcenter.change_article',)
     template_name_suffix = '_update'
 
 
-class CategoryCreateView(PermissionsMixin, generic.edit.CreateView):
-    """ View for creating new Category instances """
+class CategoryCreateView(OptionalFormMixin, PermissionsMixin,
+                         generic.edit.CreateView):
+    """View for creating new Category instances."""
     fields = ('title', 'parent')
+    form_class_setting = 'HELPCENTER_CATEGORY_CREATE_FORM'
     model = models.Category
     permissions = ('helpcenter.add_category',)
     template_name_suffix = '_create'
@@ -73,9 +79,11 @@ class CategoryDetailView(generic.DetailView):
         return context
 
 
-class CategoryUpdateView(PermissionsMixin, generic.edit.UpdateView):
+class CategoryUpdateView(OptionalFormMixin, PermissionsMixin,
+                         generic.edit.UpdateView):
     """ View for updating existing Category instances """
     fields = ('title', 'parent')
+    form_class_setting = 'HELPCENTER_CATEGORY_UPDATE_FORM'
     model = models.Category
     permissions = ('helpcenter.change_category',)
     template_name_suffix = '_update'
