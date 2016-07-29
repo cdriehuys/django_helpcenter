@@ -148,7 +148,8 @@ class Category(models.Model):
 
     @property
     def num_articles(self):
-        articles = Article.objects.filter(category=self).count()
+        """int: Return the number of articles in the category."""
+        articles = self.article_set.exclude(draft=True).count()
 
         for category in self.category_set.all():
             articles += category.num_articles

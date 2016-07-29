@@ -304,6 +304,16 @@ class TestCategoryModel(TestCase):
 
         self.assertEqual(1, category.num_articles)
 
+    def test_num_articles_draft(self):
+        """Test `num_articles` property with draft articles.
+
+        Articles marked as drafts should not be included in the count.
+        """
+        category = create_category()
+        create_article(category=category, draft=True)
+
+        self.assertEqual(0, category.num_articles)
+
     def test_num_articles_nested(self):
         """ Test num_articles property with nested categories.
 
