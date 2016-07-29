@@ -31,8 +31,7 @@ def string_to_class(class_string):
 
     if '.' not in class_string:
         logger.error(
-            "'{}' is not a fully qualifed class name".format(class_string),
-            exc_info=True)
+            "'{}' is not a fully qualifed class name".format(class_string))
 
         raise ValueError("'class_string' must be a fully qualifed name.")
 
