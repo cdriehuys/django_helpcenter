@@ -9,7 +9,7 @@ from helpcenter.mixins import OptionalFormMixin, PermissionsMixin
 class ArticleCreateView(OptionalFormMixin, PermissionsMixin,
                         generic.edit.CreateView):
     """View for creating new Article instances."""
-    fields = ('title', 'body', 'category')
+    fields = ('title', 'body', 'category', 'draft')
     form_class_setting = 'HELPCENTER_ARTICLE_CREATE_FORM'
     model = models.Article
     permissions = ('helpcenter.add_article',)
@@ -34,7 +34,7 @@ class ArticleDetailView(generic.DetailView):
 class ArticleUpdateView(OptionalFormMixin, PermissionsMixin,
                         generic.edit.UpdateView):
     """ View for updating Article instances """
-    fields = ('title', 'body', 'category')
+    fields = ('title', 'body', 'category', 'draft')
     form_class_setting = 'HELPCENTER_ARTICLE_UPDATE_FORM'
     model = models.Article
     permissions = ('helpcenter.change_article',)
