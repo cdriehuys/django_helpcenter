@@ -1,9 +1,10 @@
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from helpcenter import models
-from helpcenter.testing_utils import create_article, create_category
+from helpcenter.testing_utils import (
+    create_article, create_category, instance_to_queryset_string)
 
 
 class TestArticleModel(TestCase):
@@ -125,6 +126,46 @@ class TestArticleModel(TestCase):
 
 class TestCategoryModel(TestCase):
     """ Test cases for the Category model """
+
+    @override_settings(HELPCENTER_EXPANDED_ARTICLE_LIST=False)
+    def test_article_list_default(self):
+        """Test the default article list.
+
+        By default, this property should return articles who's category
+        is that single category instance.
+        """
+        top_category = create_category()
+        top_article = create_article(category=top_category)
+
+        child_category = create_category(parent=top_category)
+        create_article(category=child_category)
+
+        self.assertQuerysetEqual(
+            top_category.article_list,
+            [instance_to_queryset_string(top_article)])
+
+    @override_settings(HELPCENTER_EXPANDED_ARTICLE_LIST=True)
+    def test_article_list_expanded(self):
+        """Test the expanded article list.
+
+        If the `HELPCENTER_EXPANDED_ARTICLE_LIST` setting is true, all
+        articles in the Category instance's child categories should be
+        included in the list.
+        """
+        top_category = create_category()
+        top_article = create_article(category=top_category)
+
+        child_category = create_category(parent=top_category)
+        child_article = create_article(category=child_category)
+
+        deep_child_category = create_category(parent=child_category)
+        deep_child_article = create_article(category=deep_child_category)
+
+        results = top_category.article_list
+
+        self.assertTrue(top_article in results)
+        self.assertTrue(child_article in results)
+        self.assertTrue(deep_child_article in results)
 
     def test_create(self):
         """ Test creating a Category with all its fields.
