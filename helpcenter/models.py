@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
@@ -16,6 +17,11 @@ class Article(models.Model):
         blank=True,
         help_text="The parent category for the article.",
         verbose_name="Article Category")
+
+    draft = models.BooleanField(
+        default=False,
+        help_text="Marking an article as a draft will hide it from users.",
+        verbose_name="article is a draft")
 
     time_edited = models.DateTimeField(
         auto_now=True,
@@ -56,6 +62,28 @@ class Article(models.Model):
         """ Get the url of the instance's update view """
         return reverse('helpcenter:article-update', kwargs={'pk': self.pk})
 
+    def save(self, *args, **kwargs):
+        """Save the article instance to the database.
+
+        This overrides Django's default save method in order to update
+        the instance's `time_published` attribute if the instance is
+        being converted from a draft to a normal article.
+
+        Args:
+            *args: Passed to the default implementation.
+            **kwargs: Passed to the default implementation.
+
+        Returns:
+            Article: The new saved instance.
+        """
+        if self.pk and not self.draft:
+            old_obj = Article.objects.get(pk=self.pk)
+
+            if old_obj.draft:
+                self.time_published = timezone.now()
+
+        return super(Article, self).save(*args, **kwargs)
+
 
 class Category(models.Model):
     """ Model to represent a category to contain articles """
@@ -81,6 +109,24 @@ class Category(models.Model):
         """ Return the Category's title """
         return self.title
 
+    @property
+    def article_list(self):
+        """List of articles in this category.
+
+        If the setting `HELPCENTER_EXPANDED_ARTICLE_LIST` is true, this
+        list will include all the articles in this instance's child
+        categories as well.
+        """
+        if getattr(settings, 'HELPCENTER_EXPANDED_ARTICLE_LIST', False):
+            articles = self.article_set.all()
+
+            for category in self.category_set.all():
+                articles |= category.article_list
+
+            return articles
+
+        return self.article_set.all()
+
     def get_absolute_url(self):
         """ Get the url of the instance's detail view """
         return reverse('helpcenter:category-detail', kwargs={'pk': self.pk})
@@ -102,7 +148,8 @@ class Category(models.Model):
 
     @property
     def num_articles(self):
-        articles = Article.objects.filter(category=self).count()
+        """int: Return the number of articles in the category."""
+        articles = self.article_set.exclude(draft=True).count()
 
         for category in self.category_set.all():
             articles += category.num_articles
