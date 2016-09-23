@@ -5,4 +5,5 @@ flake8
 nose
 sphinx
 sphinx-autobuild
+sphinx-rtd-theme
 tox
