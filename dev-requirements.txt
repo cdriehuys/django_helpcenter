@@ -3,4 +3,6 @@ coverage
 django-nose
 flake8
 nose
+sphinx
+sphinx-autobuild
 tox
