@@ -32,6 +32,7 @@ import os
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinxcontrib.issuetracker',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -344,3 +345,8 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #
 # texinfo_no_detailmenu = False
+
+
+# Configuration for issue tracker
+issuetracker = 'github'
+issuetracker_project = 'cdriehuys/django_helpcenter'
