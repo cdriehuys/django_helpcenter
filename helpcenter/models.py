@@ -106,7 +106,10 @@ class Category(models.Model):
         verbose_name_plural = 'categories'
 
     def __str__(self):
-        """ Return the Category's title """
+        """ Return the Category's hierarchy in string form """
+        if self.parent:
+            return "{} > {}".format(self.parent, self.title)
+
         return self.title
 
     @property
