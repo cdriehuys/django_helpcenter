@@ -590,6 +590,34 @@ class TestCategoryDetailView(AuthTestMixin, TestCase):
 
         self.assertEqual(404, response.status_code)
 
+    @override_settings(HELPCENTER_ARTICLES_PER_PAGE=1)
+    def test_pagination(self):
+        """Test paginating articles.
+
+        There should be a maximum of HELPCENTER_ARTICLES_PER_PAGE
+        articles on each page.
+        """
+        category = create_category()
+
+        a1 = create_article(category=category, title='a1')
+        a2 = create_article(category=category, title='a2')
+
+        url = category.get_absolute_url()
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertQuerysetEqual(
+            response.context['articles'],
+            [instance_to_queryset_string(a1)])
+
+        url = "{}?page=2".format(url)
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertQuerysetEqual(
+            response.context['articles'],
+            [instance_to_queryset_string(a2)])
+
     def test_valid_pk(self):
         """ Test getting the detail view of a category.
 
