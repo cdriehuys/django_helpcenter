@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.views import generic
 
@@ -75,12 +77,25 @@ class CategoryDetailView(generic.DetailView):
         if not self.request.user.has_perm('helpcenter.change_article'):
             articles = articles.exclude(draft=True)
 
-        context['articles'] = articles
+        context['articles'] = self._paginate_query(articles)
 
         child_categories = models.Category.objects.filter(parent=self.object)
         context['categories'] = child_categories
 
         return context
+
+    def _paginate_query(self, query):
+        """Paginate the given query."""
+        per_page = getattr(settings, 'HELPCENTER_ARTICLES_PER_PAGE', 10)
+        paginator = Paginator(query, per_page)
+
+        page = self.request.GET.get('page')
+        try:
+            return paginator.page(page)
+        except PageNotAnInteger:
+            return paginator.page(1)
+        except EmptyPage:
+            return paginator.page(paginator.num_pages)
 
 
 class CategoryUpdateView(OptionalFormMixin, PermissionsMixin,
