@@ -12,6 +12,7 @@ Contents:
 
    installation
    configuration
+   release notes
 
 
 
