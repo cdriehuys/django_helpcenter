@@ -335,3 +335,16 @@ class TestCategoryModel(TestCase):
         category = models.Category(title='Test Category')
 
         self.assertEqual(category.title, str(category))
+
+    def test_string_conversion_nested(self):
+        """Test converting a nested Category instance to a string.
+
+        If a category has a parent category, it's string representation
+        should show that.
+        """
+        parent = create_category(title='parent')
+        category = create_category(parent=parent, title='child')
+
+        expected = "{} > {}".format(parent.title, category.title)
+
+        self.assertEqual(expected, str(category))
