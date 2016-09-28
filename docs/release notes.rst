@@ -5,6 +5,9 @@ Release Notes
 v1.0
 ----
 
+**Breaking Changes**:
+  * Close #18: Remove search functionality.
+
 **Features:**
   * Close #27: The article list is now paginated.
   * Close #28: The string representation of a category now includes
