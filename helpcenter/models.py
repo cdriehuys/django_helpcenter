@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
+from django.utils.text import slugify
 
 
 class Article(models.Model):
@@ -101,6 +102,9 @@ class Category(models.Model):
         help_text="Categories can be nested as deep as you would like.",
         verbose_name="Parent Category")
 
+    slug = models.SlugField(
+        verbose_name="Category URL Slug")
+
     class Meta:
         """ Meta options for the Category model """
         verbose_name_plural = 'categories'
@@ -158,3 +162,13 @@ class Category(models.Model):
             articles += category.num_articles
 
         return articles
+
+    def save(self, *args, **kwargs):
+        """Save the category to the database.
+
+        If the category is being created, its slug is generated.
+        """
+        if not self.id:
+            self.slug = slugify(self.title)[:50]
+
+        return super(Category, self).save(*args, **kwargs)

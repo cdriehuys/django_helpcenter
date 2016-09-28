@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.utils import timezone
+from django.utils.text import slugify
 
 from helpcenter import models
 from helpcenter.testing_utils import (
@@ -325,6 +326,29 @@ class TestCategoryModel(TestCase):
         create_article(category=child)
 
         self.assertEqual(1, category.num_articles)
+
+    def test_slug_generation(self):
+        """Test the creation of the category's slug.
+
+        When a category is first saved, it should generate a slug from
+        its title.
+        """
+        category = create_category(title='Test Title')
+
+        self.assertEqual(slugify('Test Title'), category.slug)
+
+    def test_slug_title_change(self):
+        """Test a category's slug when its title is changed.
+
+        Changing the title after the initial save should not change the
+        slug.
+        """
+        category = create_category(title='Test Title')
+
+        category.title = 'New Title'
+        category.save()
+
+        self.assertEqual(slugify('Test Title'), category.slug)
 
     def test_string_conversion(self):
         """ Test converting a Category instance to a string.
