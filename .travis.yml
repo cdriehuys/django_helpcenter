@@ -1,44 +1,39 @@
 sudo: false
-
 language: python
 python:
-  - "2.7"
-  - "3.3"
-  - "3.4"
-  - "3.5"
-
+- '2.7'
+- '3.3'
+- '3.4'
+- '3.5'
 env:
   matrix:
-    - DJANGO="django >=1.8,<1.9"
-    - DJANGO="django >=1.9,<1.10"
-
+  - DJANGO="django >=1.8,<1.9"
+  - DJANGO="django >=1.9,<1.10"
 matrix:
   exclude:
-    - python: "3.3"
-      env: DJANGO="django >=1.9,<1.10"
-
+  - python: '3.3'
+    env: DJANGO="django >=1.9,<1.10"
 before_install:
-  - pip install --upgrade pip wheel
-
-# install dependencies
+- pip install --upgrade pip wheel
 install:
-  - pip install "$DJANGO"
-  - python setup.py install
-  - pip install -r dev-requirements.txt
-  - pip install codecov
-
-# lint before testing
+- pip install "$DJANGO"
+- python setup.py install
+- pip install -r dev-requirements.txt
+- pip install codecov
 before_script:
-  - flake8 .
-
-# run tests
-script: ./manage.py test
-
-# publish coverage reports
+- flake8 .
+script: "./manage.py test"
 after_success:
-  - codecov
+- codecov
 
-# Only send emails about failures
+deploy:
+  provider: pypi
+  user: cdriehuys
+  password:
+    secure: j6XnCzf2urD1LDfu+piLbeHPN5APXYxipftimwoU3R5lMD7JR3KRomnFt3jMdgFrNpbHE295Gu38IVHaght81JDEtEvME0Crg0EVuKW4QXRK7SmnkDhAAxwCFTgD5iAE+TXPxhb1QoY+FBMzBiZLj59sQimGhRv+6JIxZK7Tf4Two5j6kFzX0nlIvydB8su8xhuJ+TzULviM/NPh/a2H+XuNjQQ26usWV6hO6HfERArUeOq9cWRAPXk2BJ8dIUw69rMwEP4vE454xJMwsvcE676EIgkamQmZ6ibGagT4SJGLIC5XEK8XS0X4iy+9UYF4qhMZa8VLG006qNHZavf7TYAqFy/dP5+ehs/Vu4gAYFtLKjHggOdxEmOVZ13N71/BXxZ6Ze4iiANM33IsGISHszaS5m6B/QidaFar5Q4F8wMi/XqqqZ6v35cpGCEIG3hJC1PLtuuAEFCceVf/0YvuoTpLgNz22QQ4eBA7r78uQxhSMk2d0zI3/O24UWsuC/E06rNUFNeDtnt5cUBM2HyqXa4ZiuHCRE0pnGeGRxQRGnryUanzawGmpiLMNL53+WLTSdYD2OUQ5LoqLRiaSDWWsylDmmGO8comyCLnjZK9qnzG8Cqkkf8E0/qjI4wl1ZI61kxlEbZjoN54Pl2SsKuGM7Yfo1JSuP/Zj5IkAcyUKdk=
+  on:
+    tags: true
+
 notifications:
   email:
     on_success: never
