@@ -182,7 +182,10 @@ class TestArticleDetailView(TestCase):
         If the pk used for the detail view doesn't exist, the page
         should 404.
         """
-        url = reverse('helpcenter:article-detail', kwargs={'pk': 1})
+        url = reverse('helpcenter:article-detail', kwargs={
+            'article_pk': 1,
+            'article_slug': 'foo'
+        })
         response = self.client.get(url)
 
         self.assertEqual(404, response.status_code)
@@ -585,10 +588,41 @@ class TestCategoryDetailView(AuthTestMixin, TestCase):
 
         If no Category with the given pk exists, the page should 404.
         """
-        url = reverse('helpcenter:category-detail', kwargs={'pk': 1})
+        url = reverse('helpcenter:category-detail', kwargs={
+            'category_pk': 1,
+            'category_slug': 'foo'
+        })
         response = self.client.get(url)
 
         self.assertEqual(404, response.status_code)
+
+    @override_settings(HELPCENTER_ARTICLES_PER_PAGE=1)
+    def test_pagination(self):
+        """Test paginating articles.
+
+        There should be a maximum of HELPCENTER_ARTICLES_PER_PAGE
+        articles on each page.
+        """
+        category = create_category()
+
+        a1 = create_article(category=category, title='a1')
+        a2 = create_article(category=category, title='a2')
+
+        url = category.get_absolute_url()
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertQuerysetEqual(
+            response.context['articles'],
+            [instance_to_queryset_string(a1)])
+
+        url = "{}?page=2".format(url)
+        response = self.client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        self.assertQuerysetEqual(
+            response.context['articles'],
+            [instance_to_queryset_string(a2)])
 
     def test_valid_pk(self):
         """ Test getting the detail view of a category.
@@ -748,36 +782,3 @@ class TestIndexView(TestCase):
         self.assertQuerysetEqual(
             response.context['categories'],
             [instance_to_queryset_string(category)])
-
-
-class TestSearchView(TestCase):
-    """ Test cases for the search view """
-    url = reverse('helpcenter:search')
-
-    def test_get(self):
-        """ Test submitting a plain GET request.
-
-        The initial GET request to the page should display a search box.
-        """
-        response = self.client.get(self.url)
-
-        self.assertEqual(200, response.status_code)
-        self.assertFalse(response.context['articles'].exists())
-        self.assertIsNone(response.context['query'])
-
-    def test_get_with_query(self):
-        """ Test submitting a GET request with a search query.
-
-        If there is a search query in the url, the response should
-        contain context objects with the query and its results.
-        """
-        article = create_article(title='Test Article')
-
-        url = '{}?q={}'.format(self.url, 'test')
-        response = self.client.get(url)
-
-        self.assertEqual(200, response.status_code)
-        self.assertEqual('test', response.context['query'])
-        self.assertQuerysetEqual(
-            response.context['articles'],
-            [instance_to_queryset_string(article)])

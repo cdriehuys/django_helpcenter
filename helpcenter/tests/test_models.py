@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.utils import timezone
+from django.utils.text import slugify
 
 from helpcenter import models
 from helpcenter.testing_utils import (
@@ -98,7 +99,10 @@ class TestArticleModel(TestCase):
         """
         article = create_article()
 
-        url = reverse('helpcenter:article-detail', kwargs={'pk': article.pk})
+        url = reverse('helpcenter:article-detail', kwargs={
+            'article_pk': article.pk,
+            'article_slug': article.slug,
+        })
 
         self.assertEqual(url, article.get_absolute_url())
 
@@ -110,7 +114,10 @@ class TestArticleModel(TestCase):
         article = create_article()
 
         expected = reverse(
-            'helpcenter:article-delete', kwargs={'pk': article.pk})
+            'helpcenter:article-delete', kwargs={
+                'article_pk': article.pk,
+                'article_slug': article.slug,
+            })
 
         self.assertEqual(expected, article.get_delete_url())
 
@@ -147,9 +154,35 @@ class TestArticleModel(TestCase):
         article = create_article()
 
         expected = reverse(
-            'helpcenter:article-update', kwargs={'pk': article.pk})
+            'helpcenter:article-update', kwargs={
+                'article_pk': article.pk,
+                'article_slug': article.slug,
+            })
 
         self.assertEqual(expected, article.get_update_url())
+
+    def test_slug_generation(self):
+        """Test the creation of the article's slug.
+
+        When an article is first saved, it should generate a slug from
+        its title.
+        """
+        article = create_article(title='Test Title')
+
+        self.assertEqual(slugify('Test Title'), article.slug)
+
+    def test_slug_title_change(self):
+        """Test an article's slug when its title is changed.
+
+        Changing the title after the initial save should not change the
+        slug.
+        """
+        article = create_article(title='Test Title')
+
+        article.title = 'New Title'
+        article.save()
+
+        self.assertEqual(slugify('Test Title'), article.slug)
 
     def test_string_conversion(self):
         """ Test converting an Article to a string.
@@ -240,7 +273,12 @@ class TestCategoryModel(TestCase):
         """
         category = create_category()
 
-        url = reverse('helpcenter:category-detail', kwargs={'pk': category.pk})
+        url = reverse(
+            'helpcenter:category-detail',
+            kwargs={
+                'category_pk': category.pk,
+                'category_slug': category.slug
+            })
 
         self.assertEqual(url, category.get_absolute_url())
 
@@ -252,7 +290,10 @@ class TestCategoryModel(TestCase):
         category = create_category()
 
         expected = reverse(
-            'helpcenter:category-delete', kwargs={'pk': category.pk})
+            'helpcenter:category-delete', kwargs={
+                'category_pk': category.pk,
+                'category_slug': category.slug
+            })
 
         self.assertEqual(expected, category.get_delete_url())
 
@@ -289,7 +330,10 @@ class TestCategoryModel(TestCase):
         category = create_category()
 
         expected = reverse(
-            'helpcenter:category-update', kwargs={'pk': category.pk})
+            'helpcenter:category-update', kwargs={
+                'category_pk': category.pk,
+                'category_slug': category.slug
+            })
 
         self.assertEqual(expected, category.get_update_url())
 
@@ -326,6 +370,29 @@ class TestCategoryModel(TestCase):
 
         self.assertEqual(1, category.num_articles)
 
+    def test_slug_generation(self):
+        """Test the creation of the category's slug.
+
+        When a category is first saved, it should generate a slug from
+        its title.
+        """
+        category = create_category(title='Test Title')
+
+        self.assertEqual(slugify('Test Title'), category.slug)
+
+    def test_slug_title_change(self):
+        """Test a category's slug when its title is changed.
+
+        Changing the title after the initial save should not change the
+        slug.
+        """
+        category = create_category(title='Test Title')
+
+        category.title = 'New Title'
+        category.save()
+
+        self.assertEqual(slugify('Test Title'), category.slug)
+
     def test_string_conversion(self):
         """ Test converting a Category instance to a string.
 
@@ -335,3 +402,16 @@ class TestCategoryModel(TestCase):
         category = models.Category(title='Test Category')
 
         self.assertEqual(category.title, str(category))
+
+    def test_string_conversion_nested(self):
+        """Test converting a nested Category instance to a string.
+
+        If a category has a parent category, it's string representation
+        should show that.
+        """
+        parent = create_category(title='parent')
+        category = create_category(parent=parent, title='child')
+
+        expected = "{} > {}".format(parent.title, category.title)
+
+        self.assertEqual(expected, str(category))

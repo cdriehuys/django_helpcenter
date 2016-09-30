@@ -6,13 +6,6 @@
 
   <h1>Help Center</h1>
 
-  <form id='search-form' action='{% url "helpcenter:search" %}' method='get'>
-    <label for='search-input'>Search for Articles: </label>
-    <input type='text' id='search-input' name='q' placeholder='Enter your search term' />
-
-    <button type='submit'>Search</button>
-  </form>
-
   {% if categories %}
 
     <h2>Categories</h2>
