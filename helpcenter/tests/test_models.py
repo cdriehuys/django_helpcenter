@@ -99,7 +99,10 @@ class TestArticleModel(TestCase):
         """
         article = create_article()
 
-        url = reverse('helpcenter:article-detail', kwargs={'pk': article.pk})
+        url = reverse('helpcenter:article-detail', kwargs={
+            'article_pk': article.pk,
+            'article_slug': article.slug,
+        })
 
         self.assertEqual(url, article.get_absolute_url())
 
@@ -111,7 +114,10 @@ class TestArticleModel(TestCase):
         article = create_article()
 
         expected = reverse(
-            'helpcenter:article-delete', kwargs={'pk': article.pk})
+            'helpcenter:article-delete', kwargs={
+                'article_pk': article.pk,
+                'article_slug': article.slug,
+            })
 
         self.assertEqual(expected, article.get_delete_url())
 
@@ -148,9 +154,35 @@ class TestArticleModel(TestCase):
         article = create_article()
 
         expected = reverse(
-            'helpcenter:article-update', kwargs={'pk': article.pk})
+            'helpcenter:article-update', kwargs={
+                'article_pk': article.pk,
+                'article_slug': article.slug,
+            })
 
         self.assertEqual(expected, article.get_update_url())
+
+    def test_slug_generation(self):
+        """Test the creation of the article's slug.
+
+        When an article is first saved, it should generate a slug from
+        its title.
+        """
+        article = create_article(title='Test Title')
+
+        self.assertEqual(slugify('Test Title'), article.slug)
+
+    def test_slug_title_change(self):
+        """Test an article's slug when its title is changed.
+
+        Changing the title after the initial save should not change the
+        slug.
+        """
+        article = create_article(title='Test Title')
+
+        article.title = 'New Title'
+        article.save()
+
+        self.assertEqual(slugify('Test Title'), article.slug)
 
     def test_string_conversion(self):
         """ Test converting an Article to a string.
@@ -244,7 +276,7 @@ class TestCategoryModel(TestCase):
         url = reverse(
             'helpcenter:category-detail',
             kwargs={
-                'pk': category.pk,
+                'category_pk': category.pk,
                 'category_slug': category.slug
             })
 
@@ -259,7 +291,7 @@ class TestCategoryModel(TestCase):
 
         expected = reverse(
             'helpcenter:category-delete', kwargs={
-                'pk': category.pk,
+                'category_pk': category.pk,
                 'category_slug': category.slug
             })
 
@@ -299,7 +331,7 @@ class TestCategoryModel(TestCase):
 
         expected = reverse(
             'helpcenter:category-update', kwargs={
-                'pk': category.pk,
+                'category_pk': category.pk,
                 'category_slug': category.slug
             })
 
