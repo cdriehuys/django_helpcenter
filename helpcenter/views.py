@@ -14,6 +14,7 @@ class ArticleCreateView(OptionalFormMixin, PermissionsMixin,
     form_class_setting = 'HELPCENTER_ARTICLE_CREATE_FORM'
     model = models.Article
     permissions = ('helpcenter.add_article',)
+    pk_url_kwarg = 'article_pk'
     template_name_suffix = '_create'
 
 
@@ -21,6 +22,7 @@ class ArticleDeleteView(PermissionsMixin, generic.edit.DeleteView):
     """ View for deleting an Article instance """
     model = models.Article
     permissions = ('helpcenter.delete_article',)
+    pk_url_kwarg = 'article_pk'
 
     def get_success_url(self):
         """ Redirect to the instance's parent """
@@ -30,6 +32,7 @@ class ArticleDeleteView(PermissionsMixin, generic.edit.DeleteView):
 class ArticleDetailView(generic.DetailView):
     """ View for viewing an article's details """
     model = models.Article
+    pk_url_kwarg = 'article_pk'
 
 
 class ArticleUpdateView(OptionalFormMixin, PermissionsMixin,
@@ -39,6 +42,7 @@ class ArticleUpdateView(OptionalFormMixin, PermissionsMixin,
     form_class_setting = 'HELPCENTER_ARTICLE_UPDATE_FORM'
     model = models.Article
     permissions = ('helpcenter.change_article',)
+    pk_url_kwarg = 'article_pk'
     template_name_suffix = '_update'
 
 
@@ -49,6 +53,7 @@ class CategoryCreateView(OptionalFormMixin, PermissionsMixin,
     form_class_setting = 'HELPCENTER_CATEGORY_CREATE_FORM'
     model = models.Category
     permissions = ('helpcenter.add_category',)
+    pk_url_kwarg = 'category_pk'
     template_name_suffix = '_create'
 
 
@@ -56,6 +61,7 @@ class CategoryDeleteView(PermissionsMixin, generic.edit.DeleteView):
     """ View for deleting Category instances """
     model = models.Category
     permissions = ('helpcenter.delete_category',)
+    pk_url_kwarg = 'category_pk'
 
     def get_success_url(self):
         """ Return the url of the instances parent """
@@ -65,6 +71,7 @@ class CategoryDeleteView(PermissionsMixin, generic.edit.DeleteView):
 class CategoryDetailView(generic.DetailView):
     """ View for viewing a Category's details """
     model = models.Category
+    pk_url_kwarg = 'category_pk'
 
     def get_context_data(self, *args, **kwargs):
         """ Add custom context data """
@@ -104,6 +111,7 @@ class CategoryUpdateView(OptionalFormMixin, PermissionsMixin,
     form_class_setting = 'HELPCENTER_CATEGORY_UPDATE_FORM'
     model = models.Category
     permissions = ('helpcenter.change_category',)
+    pk_url_kwarg = 'category_pk'
     template_name_suffix = '_update'
 
 

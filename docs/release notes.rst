@@ -6,6 +6,8 @@ v1.0
 ----
 
 **Breaking Changes**:
+  * Close #9: Add URL slugs for articles and categories. This will
+    break any links from external sources.
   * Close #18: Remove search functionality.
 
 **Features:**

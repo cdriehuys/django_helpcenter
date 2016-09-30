@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
+from django.utils.text import slugify
 
 
 class Article(models.Model):
@@ -22,6 +23,9 @@ class Article(models.Model):
         default=False,
         help_text="Marking an article as a draft will hide it from users.",
         verbose_name="article is a draft")
+
+    slug = models.SlugField(
+        verbose_name='Article URL Slug')
 
     time_edited = models.DateTimeField(
         auto_now=True,
@@ -45,11 +49,21 @@ class Article(models.Model):
 
     def get_absolute_url(self):
         """ Get the url of the instance's detail view """
-        return reverse('helpcenter:article-detail', kwargs={'pk': self.pk})
+        kwargs = {
+            'article_pk': self.pk,
+            'article_slug': self.slug,
+        }
+
+        return reverse('helpcenter:article-detail', kwargs=kwargs)
 
     def get_delete_url(self):
         """ Get the url of the instance's delete view """
-        return reverse('helpcenter:article-delete', kwargs={'pk': self.pk})
+        kwargs = {
+            'article_pk': self.pk,
+            'article_slug': self.slug,
+        }
+
+        return reverse('helpcenter:article-delete', kwargs=kwargs)
 
     def get_parent_url(self):
         """ Get the url of the instance's parent """
@@ -60,7 +74,12 @@ class Article(models.Model):
 
     def get_update_url(self):
         """ Get the url of the instance's update view """
-        return reverse('helpcenter:article-update', kwargs={'pk': self.pk})
+        kwargs = {
+            'article_pk': self.pk,
+            'article_slug': self.slug,
+        }
+
+        return reverse('helpcenter:article-update', kwargs=kwargs)
 
     def save(self, *args, **kwargs):
         """Save the article instance to the database.
@@ -68,6 +87,9 @@ class Article(models.Model):
         This overrides Django's default save method in order to update
         the instance's `time_published` attribute if the instance is
         being converted from a draft to a normal article.
+
+        It also generates the article's slug if it is being created for
+        the first time.
 
         Args:
             *args: Passed to the default implementation.
@@ -81,6 +103,9 @@ class Article(models.Model):
 
             if old_obj.draft:
                 self.time_published = timezone.now()
+
+        if not self.id:
+            self.slug = slugify(self.title)[:50]
 
         return super(Article, self).save(*args, **kwargs)
 
@@ -100,6 +125,9 @@ class Category(models.Model):
         blank=True,
         help_text="Categories can be nested as deep as you would like.",
         verbose_name="Parent Category")
+
+    slug = models.SlugField(
+        verbose_name="Category URL Slug")
 
     class Meta:
         """ Meta options for the Category model """
@@ -132,11 +160,21 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         """ Get the url of the instance's detail view """
-        return reverse('helpcenter:category-detail', kwargs={'pk': self.pk})
+        kwargs = {
+            'category_pk': self.pk,
+            'category_slug': self.slug
+        }
+
+        return reverse('helpcenter:category-detail', kwargs=kwargs)
 
     def get_delete_url(self):
         """ Get the url of the instance's delete view """
-        return reverse('helpcenter:category-delete', kwargs={'pk': self.pk})
+        kwargs = {
+            'category_pk': self.pk,
+            'category_slug': self.slug
+        }
+
+        return reverse('helpcenter:category-delete', kwargs=kwargs)
 
     def get_parent_url(self):
         """ Get the url of the instance's parent container """
@@ -147,7 +185,12 @@ class Category(models.Model):
 
     def get_update_url(self):
         """ Get the url of the instance's update view """
-        return reverse('helpcenter:category-update', kwargs={'pk': self.pk})
+        kwargs = {
+            'category_pk': self.pk,
+            'category_slug': self.slug
+        }
+
+        return reverse('helpcenter:category-update', kwargs=kwargs)
 
     @property
     def num_articles(self):
@@ -158,3 +201,13 @@ class Category(models.Model):
             articles += category.num_articles
 
         return articles
+
+    def save(self, *args, **kwargs):
+        """Save the category to the database.
+
+        If the category is being created, its slug is generated.
+        """
+        if not self.id:
+            self.slug = slugify(self.title)[:50]
+
+        return super(Category, self).save(*args, **kwargs)
