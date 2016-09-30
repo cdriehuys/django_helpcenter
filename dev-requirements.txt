@@ -1,10 +1,8 @@
+-r docs-requirements.txt
+
 bumpversion
 coverage
 django-nose
 flake8
 nose
-sphinx
-sphinx-autobuild
-sphinx-rtd-theme
-sphinxcontrib-issuetracker
 tox
