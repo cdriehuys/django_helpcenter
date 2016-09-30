@@ -585,7 +585,10 @@ class TestCategoryDetailView(AuthTestMixin, TestCase):
 
         If no Category with the given pk exists, the page should 404.
         """
-        url = reverse('helpcenter:category-detail', kwargs={'pk': 1})
+        url = reverse('helpcenter:category-detail', kwargs={
+            'pk': 1,
+            'category_slug': 'foo'
+        })
         response = self.client.get(url)
 
         self.assertEqual(404, response.status_code)

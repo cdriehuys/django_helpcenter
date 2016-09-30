@@ -241,7 +241,12 @@ class TestCategoryModel(TestCase):
         """
         category = create_category()
 
-        url = reverse('helpcenter:category-detail', kwargs={'pk': category.pk})
+        url = reverse(
+            'helpcenter:category-detail',
+            kwargs={
+                'pk': category.pk,
+                'category_slug': category.slug
+            })
 
         self.assertEqual(url, category.get_absolute_url())
 
@@ -253,7 +258,10 @@ class TestCategoryModel(TestCase):
         category = create_category()
 
         expected = reverse(
-            'helpcenter:category-delete', kwargs={'pk': category.pk})
+            'helpcenter:category-delete', kwargs={
+                'pk': category.pk,
+                'category_slug': category.slug
+            })
 
         self.assertEqual(expected, category.get_delete_url())
 
@@ -290,7 +298,10 @@ class TestCategoryModel(TestCase):
         category = create_category()
 
         expected = reverse(
-            'helpcenter:category-update', kwargs={'pk': category.pk})
+            'helpcenter:category-update', kwargs={
+                'pk': category.pk,
+                'category_slug': category.slug
+            })
 
         self.assertEqual(expected, category.get_update_url())
 

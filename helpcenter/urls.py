@@ -5,6 +5,19 @@ from helpcenter import views
 
 app_name = 'helpcenter'
 
+category_urls = [
+    url(r'^create/$', views.CategoryCreateView.as_view(),
+        name='category-create'),
+    url(r'^(?P<pk>[0-9]+)/(?P<category_slug>[-\w]+)/', include([
+        url(r'^$', views.CategoryDetailView.as_view(),
+            name='category-detail'),
+        url(r'^delete/$', views.CategoryDeleteView.as_view(),
+            name='category-delete'),
+        url(r'^update/$', views.CategoryUpdateView.as_view(),
+            name='category-update'),
+    ])),
+]
+
 urlpatterns = [
     url(r'^api/', include('helpcenter.api.urls', app_name='helpcenter-api',
         namespace='api')),
@@ -16,13 +29,6 @@ urlpatterns = [
         views.ArticleDeleteView.as_view(), name='article-delete'),
     url(r'^articles/(?P<pk>[0-9]+)/update/$',
         views.ArticleUpdateView.as_view(), name='article-update'),
-    url(r'^categories/create/$', views.CategoryCreateView.as_view(),
-        name='category-create'),
-    url(r'^categories/(?P<pk>[0-9]+)/$', views.CategoryDetailView.as_view(),
-        name='category-detail'),
-    url(r'^categories/(?P<pk>[0-9]+)/delete/$',
-        views.CategoryDeleteView.as_view(), name='category-delete'),
-    url(r'^categories/(?P<pk>[0-9]+)/update/$',
-        views.CategoryUpdateView.as_view(), name='category-update'),
+    url(r'^categories/', include(category_urls)),
     url(r'^$', views.IndexView.as_view(), name='index'),
 ]

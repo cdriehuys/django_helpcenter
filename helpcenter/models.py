@@ -136,11 +136,21 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         """ Get the url of the instance's detail view """
-        return reverse('helpcenter:category-detail', kwargs={'pk': self.pk})
+        kwargs = {
+            'pk': self.pk,
+            'category_slug': self.slug
+        }
+
+        return reverse('helpcenter:category-detail', kwargs=kwargs)
 
     def get_delete_url(self):
         """ Get the url of the instance's delete view """
-        return reverse('helpcenter:category-delete', kwargs={'pk': self.pk})
+        kwargs = {
+            'pk': self.pk,
+            'category_slug': self.slug
+        }
+
+        return reverse('helpcenter:category-delete', kwargs=kwargs)
 
     def get_parent_url(self):
         """ Get the url of the instance's parent container """
@@ -151,7 +161,12 @@ class Category(models.Model):
 
     def get_update_url(self):
         """ Get the url of the instance's update view """
-        return reverse('helpcenter:category-update', kwargs={'pk': self.pk})
+        kwargs = {
+            'pk': self.pk,
+            'category_slug': self.slug
+        }
+
+        return reverse('helpcenter:category-update', kwargs=kwargs)
 
     @property
     def num_articles(self):
